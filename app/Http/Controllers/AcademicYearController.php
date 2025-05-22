@@ -46,7 +46,7 @@ class AcademicYearController extends Controller implements HasMiddleware
             ->withQueryString(); // Sertakan semua query string (search, perPage, page)
 
         return Inertia::render('AcademicYears/Index', [
-            'academicYears' => $academicYears,
+            'academicYearsPaginated' => $academicYears,
             // Kirim semua filter, termasuk page
             'filters'       => $request->only(['search', 'perPage', 'page']),
             'perPage'       => (int) $perPage,

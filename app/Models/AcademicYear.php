@@ -41,4 +41,18 @@ class AcademicYear extends Model
     //     return $this->hasMany(Enrollment::class);
     // }
     // =========================================================
+
+    /**
+     * Get the semesters for the academic year.
+     */
+    public function semesters()
+    {
+        // Sebuah AcademicYear memiliki banyak Semester
+        // foreign key default akan 'academic_year_id'
+        // Jika nama foreign key di tabel 'semesters' bukan 'academic_year_id',
+        // Anda perlu menentukannya secara eksplisit, misalnya:
+        // return $this->hasMany(Semester::class, 'nama_kolom_foreign_key_di_tabel_semesters');
+        // Berdasarkan migrasi yang Anda berikan, nama kolomnya adalah 'tahun_ajaran_id'.
+        return $this->hasMany(Semester::class, 'tahun_ajaran_id');
+    }
 }

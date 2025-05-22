@@ -9,9 +9,11 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\ClassController;
-use App\Http\Controllers\EnrollmentController; 
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\AcademicPeriodController; 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -28,6 +30,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/api/academic-years', [AcademicYearController::class, 'index'])->name('api.academic-years.index');
+    Route::get('/api/semesters', [SemesterController::class, 'index'])->name('api.semesters.index');
 
     // permissions route
     Route::resource('/permissions', PermissionController::class);
@@ -55,6 +60,20 @@ Route::middleware('auth')->group(function () {
 
     // enrollments route
     Route::resource('enrollments', EnrollmentController::class);
+
+    Route::post('/set-academic-period', function (Request $request) {
+        $request->validate([
+            'academic_year_id' => 'required|exists:academic_years,id',
+            'semester_id' => 'required|exists:semesters,id',
+        ]);
+
+        session([
+            'active_academic_year_id' => $request->academic_year_id,
+            'active_semester_id' => $request->semester_id,
+        ]);
+
+        return back()->with('success', 'Academic period updated successfully.');
+    })->name('set.academic.period'); // THIS IS THE MISSING ROUTE NAME
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

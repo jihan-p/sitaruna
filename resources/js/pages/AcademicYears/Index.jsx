@@ -12,7 +12,7 @@ import { Head, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({ auth }) {
-    const { academicYears, filters } = usePage().props;
+    const { academicYearsPaginated, filters } = usePage().props;
     const resource = 'academic-years';
 
     return (
@@ -48,10 +48,10 @@ export default function Index({ auth }) {
                             </tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {academicYears.data && academicYears.data.length > 0 ? (
-                                academicYears.data.map((year, i) => (
+                            {academicYearsPaginated.data && academicYearsPaginated.data.length > 0 ? (
+                                academicYearsPaginated.data.map((year, i) => (
                                     <tr key={year.id || i}>
-                                        <Table.Td>{academicYears.from + i}</Table.Td>
+                                        <Table.Td>{academicYearsPaginated.from + i}</Table.Td>
                                         <Table.Td>{year.nama_tahun_ajaran}</Table.Td>
                                         <Table.Td>{year.tahun_mulai}</Table.Td>
                                         <Table.Td>{year.tahun_selesai}</Table.Td>
@@ -74,9 +74,9 @@ export default function Index({ auth }) {
                     </Table>
                 </Card>
 
-                {academicYears.last_page > 1 && (
+                {academicYearsPaginated.last_page > 1 && (
                     <div className="flex items-center justify-center mt-4">
-                        <Pagination links={academicYears.links} />
+                        <Pagination links={academicYearsPaginated.links} />
                     </div>
                 )}
             </Container>

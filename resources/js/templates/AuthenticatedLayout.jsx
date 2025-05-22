@@ -5,6 +5,7 @@ import ApplicationLogo from '@/components/atoms/ApplicationLogo';
 import Dropdown from '@/components/molecules/Dropdown';
 import NavLink from '@/components/atoms/NavLink';
 import ResponsiveNavLink from '@/components/atoms/ResponsiveNavLink';
+import AcademicPeriodSelector from '@/components/molecules/AcademicPeriodSelector'; // Import komponen baru
 
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
@@ -31,7 +32,9 @@ import hasAnyPermission from '@/utils/Permissions';
 
 
 export default function AuthenticatedLayout({ user: authUser, header, children }) {
-    const { auth } = usePage().props;
+
+    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const { academicYears, activeAcademicYearId, activeSemesterId, auth } = usePage().props;
     const user = auth.user;
 
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -333,46 +336,46 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                              {header}
                          </div>
 
-                        <div className="ml-auto">
-                             <Dropdown align="right" width="48">
-                                  <Dropdown.Trigger>
-                                     <span className="inline-flex rounded-md">
-                                         <button
-                                             type="button"
-                                             className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                         >
-                                             {user ? user.name : 'Guest'}
+                         <div className="hidden sm:flex sm:items-center sm:ms-6">
+                            <AcademicPeriodSelector 
+                                academicYears={academicYears}
+                                activeAcademicYearId={activeAcademicYearId}
+                                activeSemesterId={activeSemesterId} />
+                            <div className="ms-3 relative">
+                                <Dropdown align="right" width="48">
+                                <Dropdown.Trigger>
+                                    <span className="inline-flex rounded-md">
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                    >
+                                        {user ? user.name : 'Guest'}
 
-                                             <svg
-                                                 className="ms-2 -me-0.5 h-4 w-4"
-                                                 xmlns="http://www.w3.org/2000/svg"
-                                                 viewBox="0 0 20 20"
-                                                 fill="currentColor"
-                                             >
-                                                 <path
-                                                     fillRule="evenodd"
-                                                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                     clipRule="evenodd"
-                                                 />
-                                             </svg>
-                                         </button>
-                                     </span>
-                                  </Dropdown.Trigger>
+                                        <svg
+                                        className="ms-2 -me-0.5 h-4 w-4"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clipRule="evenodd"
+                                        />
+                                        </svg>
+                                    </button>
+                                    </span>
+                                </Dropdown.Trigger>
 
-                                  <Dropdown.Content>
-                                     <Dropdown.Link href={route('profile.edit')}>
-                                         Profile
-                                     </Dropdown.Link>
-                                     <Dropdown.Link
-                                         href={route('logout')}
-                                         method="post"
-                                         as="button"
-                                     >
-                                         Log Out
-                                     </Dropdown.Link>
-                                  </Dropdown.Content>
-                             </Dropdown>
-                         </div>
+                                <Dropdown.Content>
+                                    <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                    <Dropdown.Link href={route('logout')} method="post" as="button">
+                                    Log Out
+                                    </Dropdown.Link>
+                                </Dropdown.Content>
+                                </Dropdown>
+                            </div>
+                        </div>
 
                     </div>
                 </header>
