@@ -17,14 +17,14 @@ export default function Index({ auth }) {
 
     const resource = 'enrollments';
 
+    const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
+
     const handleDelete = (id) => {
         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
             router.delete(route(`${resource}.destroy`, id), {
                 onSuccess: () => {
-                    // Handle success, e.g., show flash message
                 },
                 onError: () => {
-                    // Handle error
                 }
             });
         }
@@ -69,7 +69,9 @@ export default function Index({ auth }) {
                                 <Table.Th>Tahun Ajaran</Table.Th>
                                 <Table.Th>Semester</Table.Th>
                                 <Table.Th>No. Absen</Table.Th>
-                                <Table.Th className="text-right">Aksi</Table.Th>
+                                {canPerformAnyAction && (
+                                    <Table.Th className="text-right">Aksi</Table.Th>
+                                )}
                             </tr>
                         </Table.Thead>
                         <Table.Tbody>
@@ -84,22 +86,22 @@ export default function Index({ auth }) {
                                         <Table.Td>{item.academic_year.nama_tahun_ajaran}</Table.Td>
                                         <Table.Td>{item.semester.nama_semester}</Table.Td>
                                         <Table.Td>{item.no_absen}</Table.Td>
-                                        <Table.Td className="text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                {/* Mengembalikan kondisi hasAnyPermission */}
-                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
-                                                    <EditButton url={route(`${resource}.edit`, item.id)} />
-                                                )}
-                                                {/* Mengembalikan kondisi hasAnyPermission */}
-                                                {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
-                                                    <DeleteButton url={route(`${resource}.destroy`, item.id)} />
-                                                )}
-                                            </div>
-                                        </Table.Td>
+                                        {canPerformAnyAction && (
+                                            <Table.Td className="text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
+                                                        <EditButton url={route(`${resource}.edit`, item.id)} />
+                                                    )}
+                                                    {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                                                        <DeleteButton onClick={() => handleDelete(item.id)} />
+                                                    )}
+                                                </div>
+                                            </Table.Td>
+                                        )}
                                     </tr>
                                 ))
                             ) : (
-                                <Table.Empty colSpan={9} message="Tidak ada data tersedia." />
+                                <Table.Empty colSpan={canPerformAnyAction ? 9 : 8} message="Tidak ada data tersedia." />
                             )}
                         </Table.Tbody>
                     </Table>

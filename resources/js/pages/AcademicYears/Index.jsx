@@ -12,8 +12,13 @@ import { Head, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({ auth }) {
-    const { academicYearsPaginated, filters } = usePage().props;
+    const { academicYearsPaginated, filters, auth: pageAuth } = usePage().props;
+    const allPermissions = pageAuth.permissions; // Ambil semua izin dari props Inertia
+
     const resource = 'academic-years';
+
+    // Tentukan apakah ada izin untuk aksi apapun (edit atau delete)
+    const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
 
     return (
         <AuthenticatedLayout
@@ -24,13 +29,13 @@ export default function Index({ auth }) {
 
             <Container>
                 <div className="mb-4 flex items-center justify-between gap-4">
-                    {hasAnyPermission([`${resource} create`]) && (
+                    {hasAnyPermission(allPermissions, [`${resource} create`]) && (
                         <AddButton url={route(`${resource}.create`)} />
                     )}
                     <div className="w-full md:w-4/6">
                         <Search
                             url={route(`${resource}.index`)}
-                            placeholder="Cari Tahun Ajaran..."
+                            placeholder="Cari Tahun Ajaran...."
                             filter={filters}
                         />
                     </div>
@@ -44,7 +49,9 @@ export default function Index({ auth }) {
                                 <Table.Th>Nama Tahun Ajaran</Table.Th>
                                 <Table.Th>Tahun Mulai</Table.Th>
                                 <Table.Th>Tahun Selesai</Table.Th>
-                                <Table.Th className="text-right">Aksi</Table.Th>
+                                {canPerformAnyAction && (
+                                    <Table.Th className="text-right">Aksi</Table.Th>
+                                )}
                             </tr>
                         </Table.Thead>
                         <Table.Tbody>
@@ -55,20 +62,22 @@ export default function Index({ auth }) {
                                         <Table.Td>{year.nama_tahun_ajaran}</Table.Td>
                                         <Table.Td>{year.tahun_mulai}</Table.Td>
                                         <Table.Td>{year.tahun_selesai}</Table.Td>
-                                        <Table.Td className="text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                {hasAnyPermission([`${resource} edit`]) && (
-                                                    <EditButton url={route(`${resource}.edit`, year.id)} />
-                                                )}
-                                                {hasAnyPermission([`${resource} delete`]) && (
-                                                    <DeleteButton url={route(`${resource}.destroy`, year.id)} />
-                                                )}
-                                            </div>
-                                        </Table.Td>
+                                        {canPerformAnyAction && (
+                                            <Table.Td className="text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
+                                                        <EditButton url={route(`${resource}.edit`, year.id)} />
+                                                    )}
+                                                    {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                                                        <DeleteButton url={route(`${resource}.destroy`, year.id)} />
+                                                    )}
+                                                </div>
+                                            </Table.Td>
+                                        )}
                                     </tr>
                                 ))
                             ) : (
-                                <Table.Empty colSpan={5} message="Tidak ada data Tahun Ajaran." />
+                                <Table.Empty colSpan={canPerformAnyAction ? 5 : 4} message="Tidak ada data Tahun Ajaran." />
                             )}
                         </Table.Tbody>
                     </Table>

@@ -13,7 +13,12 @@ import { Head, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({auth}) {
-    const { permissions, filters } = usePage().props;
+    const { permissions, filters, auth: pageAuth } = usePage().props;
+    const allPermissions = pageAuth.permissions;
+
+    const resource = 'permissions';
+
+    const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
 
     return (
         <AuthenticatedLayout
@@ -23,7 +28,7 @@ export default function Index({auth}) {
             <Head title={'Permissions'}/>
             <Container>
                 <div className='mb-4 flex items-center justify-between gap-4'>
-                    {hasAnyPermission(['permissions create']) &&
+                    {hasAnyPermission(allPermissions, [`${resource} create`]) &&
                         <AddButton url={route('permissions.create')}/>
                     }
                     <div className='w-full md:w-4/6'>
@@ -33,26 +38,37 @@ export default function Index({auth}) {
 
                 <Card title={'Permissions'}>
                     <Table>
-                        <Table.Thead>{<tr><Table.Th>#</Table.Th><Table.Th>Permission Name</Table.Th><Table.Th className='text-right'>Action</Table.Th></tr>}</Table.Thead><Table.Tbody>
+                        <Table.Thead>
+                            <tr>
+                                <Table.Th>#</Table.Th>
+                                <Table.Th>Permission Name</Table.Th>
+                                {canPerformAnyAction && (
+                                    <Table.Th className='text-right'>Action</Table.Th>
+                                )}
+                            </tr>
+                        </Table.Thead>
+                        <Table.Tbody>
                             {permissions && permissions.data && permissions.data.length > 0 ? (
                                 permissions.data.map((permission, i) => (
                                     <tr key={permission.id || i}>
                                         <Table.Td>{permissions.from + i}</Table.Td>
                                         <Table.Td>{permission.name}</Table.Td>
-                                        <Table.Td className='text-right'>
-                                            <div className='flex items-center justify-end gap-2'>
-                                                {hasAnyPermission(['permissions edit']) && (
-                                                    <EditButton url={route('permissions.edit', permission.id)}/>
-                                                )}
-                                                {hasAnyPermission(['permissions delete']) && (
-                                                    <DeleteButton url={route('permissions.destroy', permission.id)}/>
-                                                )}
-                                            </div>
-                                        </Table.Td>
+                                        {canPerformAnyAction && (
+                                            <Table.Td className='text-right'>
+                                                <div className='flex items-center justify-end gap-2'>
+                                                    {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
+                                                        <EditButton url={route('permissions.edit', permission.id)}/>
+                                                    )}
+                                                    {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                                                        <DeleteButton url={route('permissions.destroy', permission.id)}/>
+                                                    )}
+                                                </div>
+                                            </Table.Td>
+                                        )}
                                     </tr>
                                 ))
                             ) : (
-                                <Table.Empty colSpan={3} message={'No data available'}/>
+                                <Table.Empty colSpan={canPerformAnyAction ? 3 : 2} message={'No data available'}/>
                             )}
                         </Table.Tbody>
                     </Table>

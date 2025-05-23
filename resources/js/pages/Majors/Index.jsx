@@ -12,19 +12,24 @@ import { Head, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({ auth }) {
-  const { majors, filters } = usePage().props;
+  const { majors, filters, auth: pageAuth } = usePage().props;
+  const allPermissions = pageAuth.permissions; // Ambil semua izin dari props Inertia
+
   const resource = 'majors';
+
+  // Tentukan apakah ada izin untuk aksi apapun (edit atau delete)
+  const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
 
   return (
     <AuthenticatedLayout
-      auth={auth}
+      user={auth.user}
       header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Manajemen Jurusan</h2>}
     >
       <Head title="Manajemen Jurusan" />
 
       <Container>
         <div className="mb-4 flex items-center justify-between gap-4">
-          {hasAnyPermission([`${resource} create`]) && (
+          {hasAnyPermission(allPermissions, [`${resource} create`]) && (
             <AddButton url={route(`${resource}.create`)}>Tambah Jurusan</AddButton>
           )}
           <div className="w-full md:w-4/6">
@@ -42,7 +47,9 @@ export default function Index({ auth }) {
               <tr>
                 <Table.Th>#</Table.Th>
                 <Table.Th>Nama Jurusan</Table.Th>
-                <Table.Th className="text-right">Aksi</Table.Th>
+                {canPerformAnyAction && (
+                  <Table.Th className="text-right">Aksi</Table.Th>
+                )}
               </tr>
             </Table.Thead>
             <Table.Tbody>
@@ -51,20 +58,22 @@ export default function Index({ auth }) {
                   <tr key={major.id} className="bg-white border-b hover:bg-gray-50">
                     <Table.Td>{majors.from + i}</Table.Td>
                     <Table.Td>{major.nama_jurusan}</Table.Td>
-                    <Table.Td className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {hasAnyPermission([`${resource} edit`]) && (
-                          <EditButton url={route(`${resource}.edit`, major.id)} />
-                        )}
-                        {hasAnyPermission([`${resource} delete`]) && (
-                          <DeleteButton url={route(`${resource}.destroy`, major.id)} />
-                        )}
-                      </div>
-                    </Table.Td>
+                    {canPerformAnyAction && (
+                      <Table.Td className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
+                            <EditButton url={route(`${resource}.edit`, major.id)} />
+                          )}
+                          {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                            <DeleteButton url={route(`${resource}.destroy`, major.id)} />
+                          )}
+                        </div>
+                      </Table.Td>
+                    )}
                   </tr>
                 ))
               ) : (
-                <Table.Empty colSpan={3} message="Tidak ada data Jurusan." />
+                <Table.Empty colSpan={canPerformAnyAction ? 3 : 2} message="Tidak ada data Jurusan." />
               )}
             </Table.Tbody>
           </Table>
