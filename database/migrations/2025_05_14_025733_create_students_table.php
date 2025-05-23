@@ -29,7 +29,7 @@ return new class extends Migration
             // === MODIFIKASI: Mengubah status_akun menjadi ENUM ===
             // Anda bisa menyesuaikan nilai-nilai ENUM sesuai kebutuhan aplikasi Anda.
             // Contoh: 'aktif', 'nonaktif', 'lulus', 'cuti', 'drop_out'
-            $table->enum('status_akun', ['Aktif', 'Nonaktif', 'Lulus', 'Cuti', 'Drop Out'])->default('Aktif');
+            $table->enum('status_akun', ['Aktif', 'Nonaktif', 'Lulus', 'Mutasi', 'Keluar'])->default('Aktif');
             // ====================================================
 
             $table->string('foto_profil')->nullable(); // Foto Profil path/URL
