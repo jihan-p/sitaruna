@@ -15,15 +15,15 @@ class Student extends Model
     public const STATUS_AKTIF = 'Aktif';
     public const STATUS_NONAKTIF = 'Nonaktif';
     public const STATUS_LULUS = 'Lulus';
-    public const STATUS_CUTI = 'Cuti';
-    public const STATUS_DROP_OUT = 'Drop Out';
+    public const STATUS_MUTASI = 'Mutasi';
+    public const STATUS_KELUAR = 'Keluar';
 
     public const ALL_STATUSES = [
         self::STATUS_AKTIF,
         self::STATUS_NONAKTIF,
         self::STATUS_LULUS,
-        self::STATUS_CUTI,
-        self::STATUS_DROP_OUT,
+        self::STATUS_MUTASI,
+        self::STATUS_KELUAR,
     ];
     // =======================================================
 
