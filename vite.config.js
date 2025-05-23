@@ -26,7 +26,8 @@ export default defineConfig({
     server: {
         host: '0.0.0.0', // Ini sudah benar
         hmr: {
-            host: '10.42.0.1', // Ganti dengan IP lokal komputer Anda
+            // host: '10.42.0.1', // Ganti dengan IP lokal komputer Anda
+            host: '0.0.0.0',
         },
     },
 });

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePage, router } from '@inertiajs/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
-export default function AcademicPeriodSelector({ academicYears }) {
+export default function AcademicPeriodSelector({ academicYears, className = '' }) { // Tambahkan className sebagai prop
     const { activeAcademicYearId, activeSemesterId } = usePage().props;
 
     const [isOpen, setIsOpen] = useState(false);
@@ -51,18 +51,18 @@ export default function AcademicPeriodSelector({ academicYears }) {
 
     if (!availableAcademicYears || availableAcademicYears.length === 0) {
         return (
-            <div className="text-sm text-gray-500">
+            <div className={`text-sm text-gray-500 ${className}`}> {/* Terapkan className di sini */}
                 Data Tahun Ajaran tidak tersedia.
             </div>
         );
     }
 
     return (
-        <div className="relative inline-block text-left" ref={dropdownRef}>
+        <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}> {/* Terapkan className di sini */}
             <div>
                 <button
                     type="button"
-                    className="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    className="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 w-full" // Tambahkan w-full di sini
                     id="menu-button"
                     aria-expanded={isOpen}
                     aria-haspopup="true"
@@ -79,7 +79,7 @@ export default function AcademicPeriodSelector({ academicYears }) {
 
             {isOpen && (
                 <div
-                    className="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-h-80 overflow-y-auto"
+                    className="absolute left-0 z-10 mt-2 w-full sm:w-72 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none max-h-80 overflow-y-auto" // Ubah right-0 ke left-0, dan w-72 ke w-full sm:w-72
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="menu-button"
