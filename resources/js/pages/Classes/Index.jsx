@@ -33,7 +33,8 @@ export default function Index({ auth }) {
             <Container>
                 <div className='mb-4 flex items-center justify-between gap-4'>
                     {hasAnyPermission(allPermissions, [`${routeResourceName} create`]) && (
-                        <AddButton url={route(`${routeResourceName}.create`)}>Tambah Kelas</AddButton>
+                        <AddButton url={route(`${routeResourceName}.create`)}/>//Tambah Kelas</AddButton>
+                        // <AddButton url={route('classes.create')}/>
                     )}
                     <div className='w-full md:w-4/6'>
                         <Search
