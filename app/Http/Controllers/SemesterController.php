@@ -17,10 +17,10 @@ class SemesterController extends Controller implements HasMiddleware
     public static function middleware()
     {
         return [
-            new Middleware('permission:permissions index', only: ['index']),
-            new Middleware('permission:permissions create', only: ['create', 'store']),
-            new Middleware('permission:permissions edit', only: ['edit', 'update']),
-            new Middleware('permission:permissions delete', only: ['destroy']),
+            new Middleware('permission:semesters index', only: ['index']),
+            new Middleware('permission:semesters create', only: ['create', 'store']),
+            new Middleware('permission:semesters edit', only: ['edit', 'update']),
+            new Middleware('permission:semesters delete', only: ['destroy']),
         ];
     }
 
