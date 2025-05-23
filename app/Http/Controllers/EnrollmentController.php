@@ -91,7 +91,7 @@ class EnrollmentController extends Controller implements HasMiddleware
     {
         // Ambil semua data yang dibutuhkan untuk dropdown di form
         $students = Student::all(['id', 'nama_lengkap', 'nisn']);
-        $classes = ClassModel::all(['id', 'nama_kelas']);
+        $classes = ClassModel::with('major')->get(['id', 'nama_kelas']);
         $academicYears = AcademicYear::with('semesters')->get()->map(function($year) {
             return [
                 'id' => $year->id,
@@ -173,7 +173,8 @@ class EnrollmentController extends Controller implements HasMiddleware
     {
         // Ambil semua data yang dibutuhkan untuk dropdown di form edit
         $students = Student::all(['id', 'nama_lengkap', 'nisn']);
-        $classes = ClassModel::all(['id', 'nama_kelas']);
+        // Perbaikan: Memuat relasi 'major' untuk ClassModel
+        $classes = ClassModel::with('major')->get(['id', 'nama_kelas']);
         $academicYears = AcademicYear::with('semesters')->get()->map(function($year) {
             return [
                 'id' => $year->id,
@@ -187,15 +188,14 @@ class EnrollmentController extends Controller implements HasMiddleware
             ];
         });
 
-        // Pastikan enrollment yang akan diedit juga dimuat relasinya
-        $enrollment->load(['student', 'class', 'academicYear', 'semester']);
+        // Perbaikan: Memuat relasi 'class.major' pada enrollment yang akan diedit
+        $enrollment->load(['student', 'class.major', 'academicYear', 'semester']);
 
         return Inertia::render('Enrollments/Edit', [
             'enrollment' => $enrollment,
             'students' => $students,
             'classes' => $classes,
             'academic_years' => $academicYears,
-            // 'semesters' akan diambil melalui relasi di academic_years
         ]);
     }
 

@@ -39,7 +39,3 @@ Sistem ini saat ini mencakup modul-modul kunci yang telah diimplementasikan di s
 Saat ini proyek sedang dalam tahap pengembangan. Modul-modul dasar untuk manajemen pengguna, peran & izin, dan data akademik inti telah diimplementasikan pada antarmuka pengguna. Pengembangan lebih lanjut untuk modul akademik yang lebih rinci (seperti pengelolaan nilai, presensi, dll.) dan modul ketarunaan sedang berlangsung.
 
 ---
-
-**Catatan:**
-
-*   Anda bisa menambahkan informasi kontak, panduan kontribusi (jika open source), atau link ke dokumentasi terpisah jika ada.

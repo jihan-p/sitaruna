@@ -1,14 +1,11 @@
-// resources/js/templates/AuthenticatedLayout.jsx
-
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ApplicationLogo from '@/components/atoms/ApplicationLogo';
 import Dropdown from '@/components/molecules/Dropdown';
 import NavLink from '@/components/atoms/NavLink';
 import ResponsiveNavLink from '@/components/atoms/ResponsiveNavLink';
-import AcademicPeriodSelector from '@/components/molecules/AcademicPeriodSelector'; // Import komponen baru
+import AcademicPeriodSelector from '@/components/molecules/AcademicPeriodSelector';
 
 import { Link, usePage } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
 
 import {
     IconMenu2,
@@ -24,7 +21,7 @@ import {
     IconHeart,
     IconCalendar,
     IconCalendarStats,
-    IconListDetails, // === Import IconListDetails untuk Kelas ===
+    IconListDetails,
     IconSchool,
 } from '@tabler/icons-react';
 
@@ -36,6 +33,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const { academicYears, activeAcademicYearId, activeSemesterId, auth } = usePage().props;
     const user = auth.user;
+    const allPermissions = auth.permissions;
 
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -213,7 +211,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                         Dashboard
                     </NavLink>
 
-                    {user && hasAnyPermission(['roles index']) && (
+                    {user && hasAnyPermission(allPermissions, ['roles index']) && (
                          <NavLink
                             href={route('roles.index')}
                             active={route().current('roles.index')}
@@ -224,7 +222,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                             Roles
                         </NavLink>
                     )}
-                     {user && hasAnyPermission(['permissions index']) && (
+                     {user && hasAnyPermission(allPermissions, ['permissions index']) && (
                          <NavLink
                             href={route('permissions.index')}
                             active={route().current('permissions.index')}
@@ -235,7 +233,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                             Permissions
                          </NavLink>
                      )}
-                     {user && hasAnyPermission(['users index']) && (
+                     {user && hasAnyPermission(allPermissions, ['users index']) && (
                          <NavLink
                             href={route('users.index')}
                             active={route().current('users.index')}
@@ -247,7 +245,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                          </NavLink>
                      )}
 
-                     {user && hasAnyPermission(['students index']) && (
+                     {user && hasAnyPermission(allPermissions, ['students index']) && (
                          <NavLink
                             href={route('students.index')}
                             active={route().current('students.index')}
@@ -259,7 +257,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                         </NavLink>
                      )}
 
-                     {user && hasAnyPermission(['majors index']) && (
+                     {user && hasAnyPermission(allPermissions, ['majors index']) && (
                          <NavLink
                             href={route('majors.index')}
                             active={route().current('majors.index')}
@@ -271,29 +269,27 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                         </NavLink>
                      )}
 
-                    {user && hasAnyPermission(['academic-years index']) && (
+                    {user && hasAnyPermission(allPermissions, ['academic-years index']) && (
                          <NavLink href={route('academic-years.index')} active={route().current('academic-years.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendar}>Tahun Ajaran</NavLink>
                      )}
 
-                    {user && hasAnyPermission(['semesters index']) && (
+                    {user && hasAnyPermission(allPermissions, ['semesters index']) && (
                          <NavLink href={route('semesters.index')} active={route().current('semesters.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendarStats}>Semester</NavLink>
                      )}
 
-                     {/* === NavLink untuk Modul Kelas === */}
-                     {user && hasAnyPermission(['classes index']) && (
+                     {user && hasAnyPermission(allPermissions, ['classes index']) && (
                          <NavLink
                             href={route('classes.index')}
                             active={route().current('classes.index')}
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
-                            icon={IconListDetails} // Ikon untuk Kelas
+                            icon={IconListDetails}
                          >
                             Kelas
                          </NavLink>
                      )}
-                     {/* =============================== */}
 
-                     {user && hasAnyPermission(['enrollments index']) && (
+                     {user && hasAnyPermission(allPermissions, ['enrollments index']) && (
                          <NavLink
                             href={route('enrollments.index')}
                             active={route().current('enrollments.index')}
@@ -317,7 +313,6 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                 ></div>
             )}
 
-            {/* Dropdown Akun di Bagian Bawah untuk Mobile */}
             {isMobile && isMobileSidebarOpen && (
             <div className="border-t border-gray-200 p-4">
                 <div className="relative">
@@ -375,7 +370,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                          </div>
 
                          <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <AcademicPeriodSelector 
+                            <AcademicPeriodSelector
                                 academicYears={academicYears}
                                 activeAcademicYearId={activeAcademicYearId}
                                 activeSemesterId={activeSemesterId} />

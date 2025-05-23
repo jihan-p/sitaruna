@@ -13,7 +13,11 @@ import { Head, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({auth}) {
-    const { users, filters } = usePage().props;
+    // Call usePage() unconditionally to get all props, including auth.permissions
+    const { users, filters, auth: pageAuth } = usePage().props;
+    const allPermissions = pageAuth.permissions; // Get permissions unconditionally
+
+    const resource = 'users'; // Define resource for consistency
 
     return (
         <AuthenticatedLayout
@@ -23,7 +27,8 @@ export default function Index({auth}) {
             <Head title={'Users'}/>
             <Container>
                 <div className='mb-4 flex items-center justify-between gap-4'>
-                    {hasAnyPermission(['users create']) &&
+                    {/* Pass allPermissions to hasAnyPermission */}
+                    {hasAnyPermission(allPermissions, [`${resource} create`]) &&
                         <AddButton url={route('users.create')}/>
                     }
                     <div className='w-full md:w-4/6'>
@@ -49,10 +54,12 @@ export default function Index({auth}) {
                                         </Table.Td>
                                         <Table.Td className='text-right'>
                                             <div className='flex items-center justify-end gap-2'>
-                                                {hasAnyPermission(['users edit']) && (
+                                                {/* Pass allPermissions to hasAnyPermission */}
+                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
                                                     <EditButton url={route('users.edit', user.id)}/>
                                                 )}
-                                                {hasAnyPermission(['users delete']) && (
+                                                {/* Pass allPermissions to hasAnyPermission */}
+                                                {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
                                                     <DeleteButton url={route('users.destroy', user.id)}/>
                                                 )}
                                             </div>

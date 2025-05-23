@@ -1,17 +1,36 @@
+// resources/js/Pages/Enrollments/Create.jsx
 import React from 'react';
 import AuthenticatedLayout from '@/templates/AuthenticatedLayout';
 import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import PrimaryButton from '@/components/molecules/PrimaryButton';
 import FormGroup from '@/components/molecules/FormGroup';
-import Select2 from '@/components/molecules/Select2';
+import Select2 from '@/components/molecules/Select2'; // Import your Select2 component
 import CancelButton from '@/components/molecules/CancelButton';
 import { Head, useForm, usePage } from '@inertiajs/react';
 
 export default function Create({ auth }) {
     const routeResourceName = 'enrollments';
 
-    const { students, classes, academic_years, semesters } = usePage().props;
+    // Destructure props from usePage().props
+    const { students, classes, academic_years } = usePage().props;
+
+    // Transform data to react-select format { value, label }
+    const studentOptions = students.map(student => ({
+        value: student.id,
+        label: `${student.nisn} - ${student.nama_lengkap}`
+    }));
+
+    const classOptions = classes.map(kelas => ({
+        value: kelas.id,
+        // Safely access nama_jurusan using optional chaining
+        label: `${kelas.nama_kelas} ${kelas.major ? `- ${kelas.major.nama_jurusan}` : ''}`
+    }));
+
+    const academicYearOptions = academic_years.map(year => ({
+        value: year.id,
+        label: year.nama_tahun_ajaran
+    }));
 
     const { data, setData, post, processing, errors } = useForm({
         student_id: '',
@@ -25,6 +44,17 @@ export default function Create({ auth }) {
         e.preventDefault();
         post(route('enrollments.store'));
     };
+
+    // Filter semesters based on the selected academic year
+    const selectedAcademicYear = academic_years.find(
+        (year) => year.id === data.academic_year_id
+    );
+    const semestersForSelectedYear = selectedAcademicYear
+        ? selectedAcademicYear.semesters.map(semester => ({
+            value: semester.id,
+            label: semester.nama_semester
+        }))
+        : [];
 
     return (
         <AuthenticatedLayout
@@ -43,16 +73,11 @@ export default function Create({ auth }) {
                         >
                             <Select2
                                 id="student_id"
-                                value={data.student_id}
-                                onChange={(e) => setData('student_id', e.target.value)}
-                            >
-                                <option value="">-- Pilih Siswa --</option>
-                                {students.map((student) => (
-                                    <option key={student.id} value={student.id}>
-                                        {student.nisn} - {student.nama_lengkap}
-                                    </option>
-                                ))}
-                            </Select2>
+                                options={studentOptions}
+                                value={studentOptions.find(option => option.value === data.student_id) || null}
+                                onChange={(selectedOption) => setData('student_id', selectedOption ? selectedOption.value : '')}
+                                placeholder="-- Pilih Siswa --"
+                            />
                         </FormGroup>
 
                         <FormGroup
@@ -62,16 +87,11 @@ export default function Create({ auth }) {
                         >
                             <Select2
                                 id="class_id"
-                                value={data.class_id}
-                                onChange={(e) => setData('class_id', e.target.value)}
-                            >
-                                <option value="">-- Pilih Kelas --</option>
-                                {classes.map((kelas) => (
-                                    <option key={kelas.id} value={kelas.id}>
-                                        {kelas.nama_kelas} - {kelas.major.nama_jurusan}
-                                    </option>
-                                ))}
-                            </Select2>
+                                options={classOptions}
+                                value={classOptions.find(option => option.value === data.class_id) || null}
+                                onChange={(selectedOption) => setData('class_id', selectedOption ? selectedOption.value : '')}
+                                placeholder="-- Pilih Kelas --"
+                            />
                         </FormGroup>
 
                         <FormGroup
@@ -81,16 +101,14 @@ export default function Create({ auth }) {
                         >
                             <Select2
                                 id="academic_year_id"
-                                value={data.academic_year_id}
-                                onChange={(e) => setData('academic_year_id', e.target.value)}
-                            >
-                                <option value="">-- Pilih Tahun Ajaran --</option>
-                                {academic_years.map((year) => (
-                                    <option key={year.id} value={year.id}>
-                                        {year.nama_tahun_ajaran}
-                                    </option>
-                                ))}
-                            </Select2>
+                                options={academicYearOptions}
+                                value={academicYearOptions.find(option => option.value === data.academic_year_id) || null}
+                                onChange={(selectedOption) => {
+                                    setData('academic_year_id', selectedOption ? selectedOption.value : '');
+                                    setData('semester_id', ''); // Reset semester when academic year changes
+                                }}
+                                placeholder="-- Pilih Tahun Ajaran --"
+                            />
                         </FormGroup>
 
                         <FormGroup
@@ -100,16 +118,12 @@ export default function Create({ auth }) {
                         >
                             <Select2
                                 id="semester_id"
-                                value={data.semester_id}
-                                onChange={(e) => setData('semester_id', e.target.value)}
-                            >
-                                <option value="">-- Pilih Semester --</option>
-                                {semesters.map((semester) => (
-                                    <option key={semester.id} value={semester.id}>
-                                        {semester.nama_semester}
-                                    </option>
-                                ))}
-                            </Select2>
+                                options={semestersForSelectedYear}
+                                value={semestersForSelectedYear.find(option => option.value === data.semester_id) || null}
+                                onChange={(selectedOption) => setData('semester_id', selectedOption ? selectedOption.value : '')}
+                                placeholder="-- Pilih Semester --"
+                                isDisabled={!data.academic_year_id} // Disable if no academic year is selected
+                            />
                         </FormGroup>
 
                         <FormGroup
