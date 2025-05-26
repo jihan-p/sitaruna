@@ -487,6 +487,7 @@ h1, h2, h3, h4, h5,
     height: calc(100vh - 52px);
     padding-bottom: 150px; }
   .site-mobile-menu .site-nav-wrap {
+    display: none;
     padding: 0;
     margin: 0;
     list-style: none;
@@ -1128,3 +1129,15 @@ h1, h2, h3, h4, h5,
         .comment-list li .comment-body .reply:hover {
           color: #000;
           background: #e3e3e3; }
+
+/* Tambahkan atau modifikasi bagian ini untuk menampilkan menu di dalam sidebar */
+.offcanvas-menu .site-nav-wrap {
+  display: block !important; /* Atau flex, jika layout menu adalah flexbox */
+  /* Anda mungkin juga perlu menyesuaikan padding atau margin di sini agar terlihat bagus */
+}
+
+/* Juga pastikan li di dalamnya ditampilkan jika ada aturan yang menyembunyikannya */
+.offcanvas-menu .site-nav-wrap li {
+  display: block !important; /* Pastikan item list ditampilkan */
+}
+
