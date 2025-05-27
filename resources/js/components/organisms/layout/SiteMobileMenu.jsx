@@ -1,25 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-export default function SiteMobileMenu({ isOpen, toggleMobileMenu }) {
-    useEffect(() => {
-        const desktopNav = document.querySelector('.site-menu.main-menu.js-clone-nav');
-        const mobileMenuBody = document.querySelector('.site-mobile-menu-body');
-
-        if (desktopNav && mobileMenuBody) {
-            const clonedNav = desktopNav.cloneNode(true);
-            clonedNav.classList.add('site-nav-wrap');
-            clonedNav.classList.remove('mx-auto', 'd-none', 'd-lg-block', 'm-0', 'p-0'); // Hapus kelas yang tidak perlu untuk mobile
-            mobileMenuBody.innerHTML = '';
-            mobileMenuBody.appendChild(clonedNav);
-
-            clonedNav.querySelectorAll('a').forEach(link => {
-                link.onclick = () => {
-                    toggleMobileMenu();
-                };
-            });
-        }
-    }, [isOpen]);
-
+export default function SiteMobileMenu({ isOpen, toggleMobileMenu, children }) {
     return (
         <>
             <div className={`site-mobile-menu site-navbar-target ${isOpen ? 'site-mobile-menu-open' : ''}`}>
@@ -28,7 +9,9 @@ export default function SiteMobileMenu({ isOpen, toggleMobileMenu }) {
                         <span className="icon-close2 js-menu-toggle" onClick={toggleMobileMenu}></span>
                     </div>
                 </div>
-                <div className="site-mobile-menu-body"></div>
+                <div className="site-mobile-menu-body">
+                    {children}
+                </div>
             </div>
             {isOpen && (
                 <div className="site-mobile-menu-overlay" onClick={toggleMobileMenu}></div>

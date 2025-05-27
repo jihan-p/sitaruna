@@ -1,14 +1,13 @@
-// resources/js/components/organisms/layout/SiteHeader.jsx
-import React from 'react'; // Hanya React yang perlu diimport jika tidak ada useEffect
+import React, { forwardRef } from 'react';
 import { Link } from '@inertiajs/react';
 import DesktopNav from '@/components/molecules/navigation/DesktopNav.jsx';
 import AuthNav from '@/components/molecules/navigation/AuthNav.jsx';
 import MobileMenuToggle from '@/components/molecules/navigation/MobileMenuToggle.jsx';
 import ApplicationLogo from '@/components/atoms/ApplicationLogo.jsx';
 
-export default function SiteHeader({ auth, toggleMobileMenu }) {
+const SiteHeader = forwardRef(function SiteHeader({ auth, toggleMobileMenu }, ref) {
     return (
-        <header className="site-navbar py-4 js-sticky-header site-navbar-target" role="banner">
+        <header ref={ref} className="site-navbar py-4 js-sticky-header site-navbar-target" role="banner">
             <div className="container-fluid">
                 <div className="d-flex align-items-center">
                     <div className="site-logo mr-auto w-25">
@@ -18,7 +17,7 @@ export default function SiteHeader({ auth, toggleMobileMenu }) {
                         </Link>
                     </div>
                     <div className="mx-auto text-center">
-                        <DesktopNav auth={auth} />
+                        <DesktopNav auth={auth} /> 
                     </div>
                     <div className="ml-auto w-25">
                         <AuthNav auth={auth} />
@@ -28,4 +27,6 @@ export default function SiteHeader({ auth, toggleMobileMenu }) {
             </div>
         </header>
     );
-}
+});
+
+export default SiteHeader;

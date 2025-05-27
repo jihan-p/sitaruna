@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Head } from '@inertiajs/react';
 import SiteHeader from '@/components/organisms/layout/SiteHeader.jsx';
 import SiteMobileMenu from '@/components/organisms/layout/SiteMobileMenu.jsx';
 import SiteFooter from '@/components/organisms/layout/SiteFooter.jsx';
+import DesktopNav from '@/components/molecules/navigation/DesktopNav.jsx';
+import AuthNav from '@/components/molecules/navigation/AuthNav.jsx';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -12,6 +14,9 @@ import 'owl.carousel';
 
 export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Subang' }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const stickyWrapperRef = useRef(null);
+    const siteNavbarRef = useRef(null);
 
     const toggleMobileMenu = useCallback(() => {
         setIsMobileMenuOpen(prevState => !prevState);
@@ -23,6 +28,9 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
         } else {
             document.body.classList.remove('offcanvas-menu');
         }
+        return () => {
+            document.body.classList.remove('offcanvas-menu');
+        };
     }, [isMobileMenuOpen]);
 
     useEffect(() => {
@@ -30,13 +38,15 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             easing: 'ease',
             once: true,
         });
+    }, []);
 
+    useEffect(() => {
         const anchorLinks = document.querySelectorAll('.site-navbar a[href^="#"], .site-mobile-menu-body a[href^="#"]');
+        
         const handleAnchorClick = function(e) {
             e.preventDefault();
             const targetId = this.getAttribute('href').substring(1);
 
-            // Tambahkan pemeriksaan ini: Jika targetId kosong, hentikan eksekusi
             if (!targetId) {
                 return;
             }
@@ -44,7 +54,7 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             const targetElement = document.getElementById(targetId);
 
             if (targetElement) {
-                const headerOffset = $('.site-navbar').outerHeight() || 0;
+                const headerOffset = siteNavbarRef.current ? siteNavbarRef.current.offsetHeight : ($('.site-navbar').outerHeight() || 0);
                 const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
                 const offsetPosition = elementPosition - headerOffset;
 
@@ -58,60 +68,79 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
                 }
             }
         };
+
         anchorLinks.forEach(link => {
             link.addEventListener('click', handleAnchorClick);
-        });
-
-        const handleScroll = () => {
-            const $stickyWrapper = $('.js-sticky-header');
-            const $siteNavbar = $('.site-navbar');
-            if ($stickyWrapper.length && $siteNavbar.length) {
-                const scrollTop = $(window).scrollTop();
-                if (scrollTop > 0) {
-                    $stickyWrapper.addClass('is-sticky');
-                    $siteNavbar.addClass('shrink');
-                } else {
-                    $stickyWrapper.removeClass('is-sticky');
-                    $siteNavbar.removeClass('shrink');
-                }
-            }
-        };
-
-        $(window).on('scroll', handleScroll);
-        $(window).on('resize', () => {
-            if ($(window).width() > 991.98 && isMobileMenuOpen) {
-                setIsMobileMenuOpen(false);
-            }
-        });
-
-        $('.owl-carousel').owlCarousel({
-            loop:true,
-            margin:10,
-            nav:true,
-            items:1,
-            dots: true,
-            stagePadding: 0,
-            autoplay:true,
-            autoplayHoverPause: true,
-            autoplayTimeout: 3000,
-            navText: ["<span class='icon-keyboard_arrow_left'>", "<span class='icon-keyboard_arrow_right'>"]
         });
 
         return () => {
             anchorLinks.forEach(link => {
                 link.removeEventListener('click', handleAnchorClick);
             });
-            $(window).off('scroll', handleScroll);
-            $(window).off('resize');
-            if ($('.owl-carousel').data('owl.carousel')) {
-                $('.owl-carousel').owlCarousel('destroy');
-            }
         };
     }, [isMobileMenuOpen, toggleMobileMenu]);
 
     useEffect(() => {
-        // Initialize other jQuery plugins here if needed
+        const handleScroll = () => {
+            const stickyWrapper = stickyWrapperRef.current;
+            const siteNavbar = siteNavbarRef.current;
+
+            if (stickyWrapper && siteNavbar) {
+                const scrollTop = $(window).scrollTop();
+                if (scrollTop > 0) {
+                    stickyWrapper.classList.add('is-sticky');
+                    siteNavbar.classList.add('shrink');
+                } else {
+                    stickyWrapper.classList.remove('is-sticky');
+                    siteNavbar.classList.remove('shrink');
+                }
+            }
+        };
+
+        $(window).on('scroll', handleScroll);
+
+        return () => {
+            $(window).off('scroll', handleScroll);
+        };
     }, []);
+
+    useEffect(() => {
+        const $owlCarousel = $('.owl-carousel');
+        if ($owlCarousel.length) {
+            $owlCarousel.owlCarousel({
+                loop:true,
+                margin:10,
+                nav:true,
+                items:1,
+                dots: true,
+                stagePadding: 0,
+                autoplay:true,
+                autoplayHoverPause: true,
+                autoplayTimeout: 3000,
+                navText: ["<span class='icon-keyboard_arrow_left'>", "<span class='icon-keyboard_arrow_right'>"]
+            });
+        }
+
+        return () => {
+            if ($owlCarousel.data('owl.carousel')) {
+                $owlCarousel.owlCarousel('destroy');
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 991.98 && isMobileMenuOpen) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [isMobileMenuOpen]);
 
     return (
         <>
@@ -123,11 +152,16 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             </Head>
 
             <div className="site-wrap">
-                <div className="sticky-wrapper js-sticky-header">
-                    <SiteHeader auth={auth} toggleMobileMenu={toggleMobileMenu} />
+                <div ref={stickyWrapperRef} className="sticky-wrapper js-sticky-header">
+                    <SiteHeader auth={auth} toggleMobileMenu={toggleMobileMenu} ref={siteNavbarRef} />
                 </div>
 
-                <SiteMobileMenu isOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu} />
+                <SiteMobileMenu isOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu}>
+                    {/* HANYA LAKUKAN INI jika DesktopNav dan AuthNav di bawah ini juga diubah untuk mengembalikan <ul> langsung */}
+                    {/* Ini mengikuti asumsi struktur asli tema mobile yang mengharapkan UL langsung di site-mobile-menu-body */}
+                    <DesktopNav auth={auth} isMobile={true} /> 
+                    <AuthNav auth={auth} isMobile={true} />     
+                </SiteMobileMenu>
                 <main>{children}</main>
                 <SiteFooter />
             </div>
