@@ -1,4 +1,3 @@
-// resources/js/components/organisms/layout/SiteMobileMenu.jsx
 import React, { useEffect } from 'react';
 
 export default function SiteMobileMenu({ isOpen, toggleMobileMenu }) {
@@ -8,6 +7,8 @@ export default function SiteMobileMenu({ isOpen, toggleMobileMenu }) {
 
         if (desktopNav && mobileMenuBody) {
             const clonedNav = desktopNav.cloneNode(true);
+            clonedNav.classList.add('site-nav-wrap');
+            clonedNav.classList.remove('mx-auto', 'd-none', 'd-lg-block', 'm-0', 'p-0'); // Hapus kelas yang tidak perlu untuk mobile
             mobileMenuBody.innerHTML = '';
             mobileMenuBody.appendChild(clonedNav);
 
@@ -17,7 +18,7 @@ export default function SiteMobileMenu({ isOpen, toggleMobileMenu }) {
                 };
             });
         }
-    }, [isOpen]); // Re-run when menu state changes to update cloned content
+    }, [isOpen]);
 
     return (
         <>
