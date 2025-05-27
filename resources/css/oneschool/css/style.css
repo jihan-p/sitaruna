@@ -487,7 +487,6 @@ h1, h2, h3, h4, h5,
     height: calc(100vh - 52px);
     padding-bottom: 150px; }
   .site-mobile-menu .site-nav-wrap {
-    display: none;
     padding: 0;
     margin: 0;
     list-style: none;
@@ -595,11 +594,7 @@ h1, h2, h3, h4, h5,
   .sticky-wrapper.is-sticky .site-navbar {
     -webkit-box-shadow: 4px 0 20px -5px rgba(0, 0, 0, 0.2);
     box-shadow: 4px 0 20px -5px rgba(0, 0, 0, 0.2);
-    background: #fff;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 999; }
+    background: #fff; }
     .sticky-wrapper.is-sticky .site-navbar .site-logo a {
       color: #000; }
     .sticky-wrapper.is-sticky .site-navbar .site-menu > li {
@@ -1129,15 +1124,3 @@ h1, h2, h3, h4, h5,
         .comment-list li .comment-body .reply:hover {
           color: #000;
           background: #e3e3e3; }
-
-/* Tambahkan atau modifikasi bagian ini untuk menampilkan menu di dalam sidebar */
-.offcanvas-menu .site-nav-wrap {
-  display: block !important; /* Atau flex, jika layout menu adalah flexbox */
-  /* Anda mungkin juga perlu menyesuaikan padding atau margin di sini agar terlihat bagus */
-}
-
-/* Juga pastikan li di dalamnya ditampilkan jika ada aturan yang menyembunyikannya */
-.offcanvas-menu .site-nav-wrap li {
-  display: block !important; /* Pastikan item list ditampilkan */
-}
-
