@@ -1,10 +1,11 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef } from 'react'; // Penting: Impor forwardRef
 import { Link } from '@inertiajs/react';
 import DesktopNav from '@/components/molecules/navigation/DesktopNav.jsx';
 import AuthNav from '@/components/molecules/navigation/AuthNav.jsx';
 import MobileMenuToggle from '@/components/molecules/navigation/MobileMenuToggle.jsx';
 import ApplicationLogo from '@/components/atoms/ApplicationLogo.jsx';
 
+// Gunakan forwardRef agar komponen ini bisa menerima ref dari parent (PublicLayout)
 const SiteHeader = forwardRef(function SiteHeader({ auth, toggleMobileMenu }, ref) {
     return (
         <header ref={ref} className="site-navbar py-4 js-sticky-header site-navbar-target" role="banner">
@@ -16,13 +17,17 @@ const SiteHeader = forwardRef(function SiteHeader({ auth, toggleMobileMenu }, re
                             SMK Negeri 2 Subang
                         </Link>
                     </div>
-                    <div className="mx-auto text-center">
-                        <DesktopNav auth={auth} /> 
+                    {/* Pembungkus untuk DesktopNav: d-none untuk mobile, d-lg-block untuk desktop */}
+                    <div className="mx-auto text-center d-none d-lg-block"> 
+                        <DesktopNav auth={auth} isMobile={false} /> 
                     </div>
-                    <div className="ml-auto w-25">
-                        <AuthNav auth={auth} />
-                        <MobileMenuToggle onClick={toggleMobileMenu} />
+                    {/* Pembungkus untuk AuthNav: d-none untuk mobile, d-lg-block untuk desktop */}
+                    <div className="ml-auto w-25 d-none d-lg-block"> 
+                        <AuthNav auth={auth} isMobile={false} />
                     </div>
+                    {/* Tombol menu mobile (hamburger) hanya terlihat di mobile. Kelas d-block d-lg-none */}
+                    {/* Pastikan MobileMenuToggle memiliki kelas d-block d-lg-none jika Anda ingin menyembunyikannya di desktop */}
+                    <MobileMenuToggle onClick={toggleMobileMenu} /> 
                 </div>
             </div>
         </header>

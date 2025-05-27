@@ -1,3 +1,8 @@
+/* resources/css/app.css */
+
+/* --- Import Semua CSS Tema OneSchool (sesuai index.html Anda) --- */
+/* Pastikan path ini benar sesuai struktur folder Anda */
+/* Asumsikan semua file CSS tema berada di resources/css/oneschool/ */
 @import url("./oneschool/css/bootstrap.min.css");
 @import url("./oneschool/css/jquery-ui.css");
 @import url("./oneschool/css/owl.carousel.min.css");
@@ -5,19 +10,24 @@
 @import url("./oneschool/css/jquery.fancybox.min.css");
 @import url("./oneschool/css/bootstrap-datepicker.css");
 @import url("./oneschool/css/aos.css");
-@import url("./oneschool/css/magnific-popup.css");
-@import url("./oneschool/css/mediaelementplayer.css");
+/* @import url("./oneschool/css/magnific-popup.css"); */ /* Uncomment jika Anda menggunakannya */
+/* @import url("./oneschool/css/mediaelementplayer.css"); */ /* Uncomment jika Anda menggunakannya */
 
+/* Import font icons, pastikan path benar */
 @import url("./oneschool/fonts/icomoon/style.css");
 @import url("./oneschool/fonts/flaticon/font/flaticon.css");
 
+/* Import file style.css Anda (ini adalah CSS utama tema OneSchool) */
 @import url("./oneschool/css/style.css");
 
+
+/* --- Kemudian, import Tailwind CSS --- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles untuk toggle kunci sidebar */
+/* --- Custom styles spesifik aplikasi Anda (jika ada) --- */
+/* Contoh untuk sidebar admin/dashboard, biarkan ini tetap ada */
 input[type="checkbox"]#sidebar-lock-toggle:checked + label svg {
   @apply text-blue-600; /* Warna saat aktif */
 }
@@ -37,21 +47,5 @@ input[type="checkbox"]#sidebar-lock-toggle:focus + label {
   @apply transition-all duration-300 ease-in-out;
 }
 
-.sticky-wrapper.is-sticky {
-  position: fixed !important; /* Gunakan !important jika benar-benar diperlukan */
-  top: 0 !important;
-  width: 100% !important;
-  z-index: 999; /* Pastikan ini sangat tinggi */
-  /* Tambahkan properti lain jika perlu, misal: */
-  left: 0;
-  right: 0;
-}
-
-.site-navbar.shrink {
-  /* Sesuaikan aturan shrink di sini jika ada konflik */
-  /* Misalnya, atur padding yang lebih kecil */
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  background-color: white !important; /* Jika header berubah warna saat sticky */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+/* Hapus blok sticky-wrapper.is-sticky dari sini */
+/* Kami akan mengandalkan style.css atau JS untuk ini */

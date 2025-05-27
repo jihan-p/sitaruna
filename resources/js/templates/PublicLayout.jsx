@@ -1,3 +1,4 @@
+// resources/js/Layouts/PublicLayout.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Head } from '@inertiajs/react';
 import SiteHeader from '@/components/organisms/layout/SiteHeader.jsx';
@@ -11,6 +12,7 @@ import 'aos/dist/aos.css';
 
 import $ from 'jquery';
 import 'owl.carousel';
+// Tidak perlu lagi import 'jquery.sticky' di sini karena kita sudah punya handleScroll manual
 
 export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Subang' }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,11 +40,8 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             easing: 'ease',
             once: true,
         });
-    }, []);
 
-    useEffect(() => {
         const anchorLinks = document.querySelectorAll('.site-navbar a[href^="#"], .site-mobile-menu-body a[href^="#"]');
-        
         const handleAnchorClick = function(e) {
             e.preventDefault();
             const targetId = this.getAttribute('href').substring(1);
@@ -52,17 +51,12 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             }
 
             const targetElement = document.getElementById(targetId);
-
             if (targetElement) {
-                const headerOffset = siteNavbarRef.current ? siteNavbarRef.current.offsetHeight : ($('.site-navbar').outerHeight() || 0);
-                const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
-                const offsetPosition = elementPosition - headerOffset;
-
                 window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth"
+                    top: targetElement.offsetTop - 50, // Sesuaikan offset jika header sticky menutupi
+                    behavior: 'smooth'
                 });
-
+                // Tutup menu mobile setelah klik anchor
                 if (isMobileMenuOpen) {
                     toggleMobileMenu();
                 }
@@ -73,19 +67,13 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             link.addEventListener('click', handleAnchorClick);
         });
 
-        return () => {
-            anchorLinks.forEach(link => {
-                link.removeEventListener('click', handleAnchorClick);
-            });
-        };
-    }, [isMobileMenuOpen, toggleMobileMenu]);
-
-    useEffect(() => {
+        // --- Perbaikan untuk Sticky Header Initial State ---
         const handleScroll = () => {
             const stickyWrapper = stickyWrapperRef.current;
             const siteNavbar = siteNavbarRef.current;
 
             if (stickyWrapper && siteNavbar) {
+                // Periksa apakah elemen sudah ter-render dan bukan null
                 const scrollTop = $(window).scrollTop();
                 if (scrollTop > 0) {
                     stickyWrapper.classList.add('is-sticky');
@@ -97,51 +85,26 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
             }
         };
 
+        // Panggil handleScroll segera setelah komponen dimuat
+        handleScroll(); // <-- TAMBAHKAN BARIS INI
+
         $(window).on('scroll', handleScroll);
+        // Tambahkan event listener untuk resize juga, karena bisa mempengaruhi sticky state
+        $(window).on('resize', handleScroll); // <-- TAMBAHKAN BARIS INI
 
         return () => {
-            $(window).off('scroll', handleScroll);
-        };
-    }, []);
-
-    useEffect(() => {
-        const $owlCarousel = $('.owl-carousel');
-        if ($owlCarousel.length) {
-            $owlCarousel.owlCarousel({
-                loop:true,
-                margin:10,
-                nav:true,
-                items:1,
-                dots: true,
-                stagePadding: 0,
-                autoplay:true,
-                autoplayHoverPause: true,
-                autoplayTimeout: 3000,
-                navText: ["<span class='icon-keyboard_arrow_left'>", "<span class='icon-keyboard_arrow_right'>"]
+            anchorLinks.forEach(link => {
+                link.removeEventListener('click', handleAnchorClick);
             });
-        }
-
-        return () => {
-            if ($owlCarousel.data('owl.carousel')) {
-                $owlCarousel.owlCarousel('destroy');
+            $(window).off('scroll', handleScroll);
+            $(window).off('resize', handleScroll); // <-- PASTIKAN INI ADA
+            if ($('.owl-carousel').data('owl.carousel')) {
+                $('.owl-carousel').owlCarousel('destroy');
             }
         };
-    }, []);
+    }, [isMobileMenuOpen, toggleMobileMenu]); // isMobileMenuOpen dan toggleMobileMenu adalah dependency karena digunakan di handleAnchorClick. handleScroll tidak menggunakan ini langsung.
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth > 991.98 && isMobileMenuOpen) {
-                setIsMobileMenuOpen(false);
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [isMobileMenuOpen]);
-
+    // ... sisa dari komponen PublicLayout
     return (
         <>
             <Head>
@@ -157,10 +120,8 @@ export default function PublicLayout({ auth, children, title = 'SMK Negeri 2 Sub
                 </div>
 
                 <SiteMobileMenu isOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu}>
-                    {/* HANYA LAKUKAN INI jika DesktopNav dan AuthNav di bawah ini juga diubah untuk mengembalikan <ul> langsung */}
-                    {/* Ini mengikuti asumsi struktur asli tema mobile yang mengharapkan UL langsung di site-mobile-menu-body */}
-                    <DesktopNav auth={auth} isMobile={true} /> 
-                    <AuthNav auth={auth} isMobile={true} />     
+                    <DesktopNav auth={auth} isMobile={true} />
+                    <AuthNav auth={auth} isMobile={true} />
                 </SiteMobileMenu>
                 <main>{children}</main>
                 <SiteFooter />

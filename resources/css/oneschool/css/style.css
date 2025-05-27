@@ -479,13 +479,14 @@ h1, h2, h3, h4, h5,
           max-width: 70px; }
         .site-mobile-menu .site-mobile-menu-header .site-mobile-menu-logo a:hover {
           text-decoration: none; }
-  .site-mobile-menu .site-mobile-menu-body {
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-    padding: 0 20px 20px 20px;
-    height: calc(100vh - 52px);
-    padding-bottom: 150px; }
+          .site-mobile-menu .site-mobile-menu-body {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch; /* Untuk scrolling yang halus di iOS */
+            height: calc(100vh - 100px); /* Jika header sidebar 100px */
+            /* Anda bisa menyesuaikan 100px ini jika header sidebar Anda memiliki tinggi berbeda. */
+            padding: 20px 30px; /* Jaga padding di dalam body */
+            box-sizing: border-box; /* Penting jika padding membuat tinggi melebihi */
+        }
   .site-mobile-menu .site-nav-wrap {
     padding: 0;
     margin: 0;
@@ -569,15 +570,15 @@ h1, h2, h3, h4, h5,
           padding-left: 15px !important; }
 
 .sticky-wrapper {
-  position: absolute;
+  position: relative;
   z-index: 100;
   width: 100%; }
   .sticky-wrapper + .site-blocks-cover {
     margin-top: 96px; }
   .sticky-wrapper .site-navbar {
     -webkit-transition: .3s all ease;
-    -o-transition: .3s all ease;
-    transition: .3s all ease; }
+  -o-transition: .3s all ease;
+  transition: .3s all ease; }
     .sticky-wrapper .site-navbar .site-menu > li {
       display: inline-block; }
       .sticky-wrapper .site-navbar .site-menu > li > a.active {
@@ -592,9 +593,18 @@ h1, h2, h3, h4, h5,
           left: 20px;
           right: 20px; }
   .sticky-wrapper.is-sticky .site-navbar {
-    -webkit-box-shadow: 4px 0 20px -5px rgba(0, 0, 0, 0.2);
-    box-shadow: 4px 0 20px -5px rgba(0, 0, 0, 0.2);
-    background: #fff; }
+    position: fixed !important; /* Coba ini untuk debugging */
+    top: 0 !important;          /* Coba ini untuk debugging */
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,.1);
+    transition: all 0.3s ease-in-out;
+    z-index: 999; }
+    .sticky-wrapper.is-sticky .site-navbar.shrink {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
     .sticky-wrapper.is-sticky .site-navbar .site-logo a {
       color: #000; }
     .sticky-wrapper.is-sticky .site-navbar .site-menu > li {
@@ -1124,3 +1134,99 @@ h1, h2, h3, h4, h5,
         .comment-list li .comment-body .reply:hover {
           color: #000;
           background: #e3e3e3; }
+
+/* Pastikan body tidak memiliki overflow-x di mobile */
+@media (max-width: 991.98px) {
+  body.offcanvas-menu {
+      overflow-x: hidden;
+  }
+}
+
+/* MAIN MOBILE MENU STYLING */
+.site-mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100vh;
+  background: #fff;
+  z-index: 2000;
+  -webkit-transform: translateX(300px);
+  -ms-transform: translateX(300px);
+  transform: translateX(300px);
+  -webkit-transition: 0.3s all ease-in-out;
+  -o-transition: 0.3s all ease-in-out;
+  transition: 0.3s all ease-in-out;
+  box-shadow: -10px 0 30px 0 rgba(0, 0, 0, 0.1);
+}
+
+.site-mobile-menu.site-mobile-menu-open {
+  -webkit-transform: translateX(0%);
+  -ms-transform: translateX(0%);
+  transform: translateX(0%);
+}
+
+.site-mobile-menu .site-mobile-menu-header {
+  height: 100px;
+  position: relative;
+  padding: 30px;
+}
+
+.site-mobile-menu .site-mobile-menu-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.site-mobile-menu .site-mobile-menu-body {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: calc(100vh - 100px);
+  padding: 20px 30px;
+}
+
+.site-mobile-menu .site-nav-wrap {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left; /* INI KUNCI UNTUK RATA KIRI */
+}
+
+.site-mobile-menu .site-nav-wrap li {
+  display: block;
+  margin-bottom: 0;
+}
+
+.site-mobile-menu .site-nav-wrap li a {
+  display: block;
+  padding: 10px 0;
+  font-size: 1.1rem;
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  transition: all 0.2s ease;
+}
+
+.site-mobile-menu .site-nav-wrap li:last-child a {
+  border-bottom: none;
+}
+
+.site-mobile-menu .site-nav-wrap li.active > a,
+.site-mobile-menu .site-nav-wrap li a:hover {
+  color: #4CAF50;
+}
+
+.site-mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.500);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1999;
+}
+
+
