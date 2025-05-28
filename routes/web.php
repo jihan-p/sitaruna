@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
     // enrollments route
     Route::resource('enrollments', EnrollmentController::class);
 
+    Route::resource('education-staff', EducationStaffController::class);
+
     Route::post('/set-academic-period', function (Request $request) {
         $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
