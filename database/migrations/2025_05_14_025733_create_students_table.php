@@ -31,9 +31,11 @@ return new class extends Migration
             // Contoh: 'aktif', 'nonaktif', 'lulus', 'cuti', 'drop_out'
             $table->enum('status_akun', ['Aktif', 'Nonaktif', 'Lulus', 'Mutasi', 'Keluar'])->default('Aktif');
             // ====================================================
+            $table->integer('total_poin_prestasi')->default(0);
+            $table->integer('total_poin_pelanggaran')->default(0);
 
             $table->string('foto_profil')->nullable(); // Foto Profil path/URL
-
+            
             // Foreign Key ke tabel users (untuk akun login)
             $table->foreignId('user_id')->nullable()->unique()->constrained('users')->nullOnDelete();
 
