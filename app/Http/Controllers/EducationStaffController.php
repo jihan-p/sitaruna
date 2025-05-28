@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\EducationStaff;
 use App\Models\User;
-use Spatie\Permission\Models\Role; // Import Role model for role selection
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage; // For file uploads
-use Illuminate\Validation\Rule; // For unique validation on update
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 class EducationStaffController extends Controller implements HasMiddleware
 {
-    // Define middleware permission for each action
     public static function middleware(): array
     {
         return [
@@ -54,7 +53,7 @@ class EducationStaffController extends Controller implements HasMiddleware
 
     public function create()
     {
-        $roles = Role::all(); // Get all roles for the dropdown
+        $roles = Role::all();
         return Inertia::render('EducationStaff/Create', [
             'roles' => $roles,
         ]);
@@ -75,10 +74,10 @@ class EducationStaffController extends Controller implements HasMiddleware
             'hire_date' => 'nullable|date',
             'last_education' => 'nullable|string|max:255',
             'major_education' => 'nullable|string|max:255',
-            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Added image validation
+            'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'create_user_account' => 'boolean',
             'password' => 'nullable|string|min:8|required_if:create_user_account,true',
-            'role_id' => ['nullable', 'exists:roles,id', Rule::requiredIf($request->create_user_account)], // Updated role validation
+            'role_id' => ['nullable', 'exists:roles,id', Rule::requiredIf($request->create_user_account)],
         ]);
 
         $fotoProfilPath = null;
@@ -93,7 +92,6 @@ class EducationStaffController extends Controller implements HasMiddleware
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);
-            // Assign the selected role to the user
             $user->assignRole($validated['role_id']);
             $userId = $user->id;
         }
@@ -103,7 +101,7 @@ class EducationStaffController extends Controller implements HasMiddleware
             'foto_profil' => $fotoProfilPath,
         ]));
 
-        return redirect()->route('education-staff.index')
+        return redirect()->route('education_staff.index')
                          ->with('success', 'Data PTK berhasil ditambahkan.');
     }
 
@@ -141,16 +139,14 @@ class EducationStaffController extends Controller implements HasMiddleware
             'foto_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Handle foto_profil update
         if ($request->hasFile('foto_profil')) {
-            // Delete old photo if exists
             if ($educationStaff->foto_profil) {
                 Storage::disk('public')->delete($educationStaff->foto_profil);
             }
             $validated['foto_profil'] = $request->file('foto_profil')->store('education_staff_photos', 'public');
-        } else if ($request->missing('foto_profil_removed')) { // Check if user intends to keep existing photo
-            unset($validated['foto_profil']); // Don't update photo if not provided and not removed
-        } else { // User explicitly removed photo
+        } else if ($request->missing('foto_profil_removed')) {
+            unset($validated['foto_profil']);
+        } else {
             if ($educationStaff->foto_profil) {
                 Storage::disk('public')->delete($educationStaff->foto_profil);
             }
@@ -159,7 +155,6 @@ class EducationStaffController extends Controller implements HasMiddleware
 
         $educationStaff->update($validated);
 
-        // Optionally update associated user's name/email if linked
         if ($educationStaff->user) {
             $educationStaff->user->update([
                 'name' => $validated['name'],
@@ -167,18 +162,16 @@ class EducationStaffController extends Controller implements HasMiddleware
             ]);
         }
 
-        return redirect()->route('education-staff.index')
+        return redirect()->route('education_staff.index')
                          ->with('success', 'Data PTK berhasil diperbarui.');
     }
 
     public function destroy(EducationStaff $educationStaff)
     {
-        // Delete photo if exists
         if ($educationStaff->foto_profil) {
             Storage::disk('public')->delete($educationStaff->foto_profil);
         }
 
-        // Optionally delete associated user if they are exclusively PTK
         if ($educationStaff->user) {
             $educationStaff->user->delete();
         }

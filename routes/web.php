@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EducationStaffController; 
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\AcademicYearController;
@@ -61,7 +62,7 @@ Route::middleware('auth')->group(function () {
     // enrollments route
     Route::resource('enrollments', EnrollmentController::class);
 
-    Route::resource('education-staff', EducationStaffController::class);
+    Route::resource('education_staff', EducationStaffController::class);
 
     Route::post('/set-academic-period', function (Request $request) {
         $request->validate([

@@ -1,146 +1,131 @@
-// resources/js/pages/EducationStaff/Index.jsx
 import React from 'react';
 import AuthenticatedLayout from '@/templates/AuthenticatedLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import Container from '@/components/atoms/Container';
+import Card from '@/components/organisms/Card';
 import Table from '@/components/organisms/Table';
-import PrimaryButton from '@/components/molecules/PrimaryButton';
-import DangerButton from '@/components/molecules/DangerButton';
-import EditButton from '@/components/molecules/EditButton';
-import AddButton from '@/components/molecules/AddButton';
 import Pagination from '@/components/molecules/Pagination';
 import Search from '@/components/molecules/Search';
-import Container from '@/components/atoms/Container';
-import hasAnyPermission from '@/utils/Permissions'; // Import permission helper
-import { IconEye } from '@tabler/icons-react'; // Import IconEye if you use it for "Lihat" button
+import AddButton from '@/components/molecules/AddButton';
+import EditButton from '@/components/molecules/EditButton';
+import DeleteButton from '@/components/molecules/DeleteButton';
+import { Head, usePage, Link } from '@inertiajs/react';
+import { IconEye } from '@tabler/icons-react';
+import hasAnyPermission from '@/utils/Permissions';
 
 export default function EducationStaffIndex({ auth }) {
-    const { educationStaff, filters, can: permissions } = usePage().props; // Get permissions from props
-    const { delete: destroy } = useForm();
+  const { educationStaff, filters, auth: pageAuth } = usePage().props;
+  const allPermissions = pageAuth.permissions;
 
-    const handleDelete = (id) => {
-        if (confirm('Apakah Anda yakin ingin menghapus data PTK ini?')) {
-            destroy(route('education-staff.destroy', id));
-        }
-    };
+  const resource = 'education_staff';
 
-    const formatJenisKelamin = (gender) => {
-        if (gender === 'L') {
-            return 'Laki-laki';
-        } else if (gender === 'P') {
-            return 'Perempuan';
-        }
-        return '-';
-    };
+  const formatGender = (gender) => {
+    if (gender === 'L') return 'Laki-laki';
+    if (gender === 'P') return 'Perempuan';
+    return '-';
+  };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '-';
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('id-ID', options);
-    };
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
 
-    const columns = [
-        {
-            header: 'Foto',
-            cell: ({ row }) => (
-                row.foto_profil ? (
-                    <img
-                        src={`/storage/${row.foto_profil}`}
-                        alt="Foto Profil"
-                        className="w-10 h-10 object-cover rounded-full"
-                    />
-                ) : (
-                    <img
-                        src="/images/default-profile.png" // Use your default profile image
-                        alt="Default Foto Profil"
-                        className="w-10 h-10 object-cover rounded-full"
-                    />
-                )
-            ),
-        },
-        {
-            header: 'NIP',
-            accessorKey: 'nip',
-        },
-        {
-            header: 'Nama',
-            accessorKey: 'name',
-        },
-        {
-            header: 'Jenis Kelamin',
-            accessorKey: 'gender',
-            cell: ({ value }) => formatJenisKelamin(value),
-        },
-        {
-            header: 'Jabatan',
-            accessorKey: 'position',
-        },
-        {
-            header: 'Email',
-            accessorKey: 'email',
-        },
-        {
-            header: 'Tanggal Masuk',
-            accessorKey: 'hire_date',
-            cell: ({ value }) => formatDate(value),
-        },
-        {
-            header: 'Aksi',
-            cell: ({ row }) => (
-                <div className="flex space-x-2">
-                    {permissions.show && (
-                        <Link href={route('education-staff.show', row.id)}>
-                            <PrimaryButton title="Lihat"><IconEye size={18} /></PrimaryButton>
-                        </Link>
+  const canPerformAnyAction = hasAnyPermission(allPermissions, [
+    `${resource} show`, `${resource} edit`, `${resource} delete`
+  ]);
+
+  return (
+    <AuthenticatedLayout
+      user={auth.user}
+      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Manajemen Pendidik dan Tenaga Kependidikan</h2>}
+    >
+      <Head title="Manajemen Pendidik dan Tenaga Kependidikan" />
+
+      <Container>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          {hasAnyPermission(allPermissions, [`${resource} create`]) && (
+            <AddButton href={route(`${resource}.create`)}>
+              Tambah PTK
+            </AddButton>
+          )}
+          <Search defaultValue={filters.search} />
+        </div>
+        <Card title="Daftar Pendidik dan Tenaga Kependidikan">
+          <Table>
+            <Table.Thead>
+              <tr>
+                <Table.Th>Foto</Table.Th>
+                <Table.Th>NIP</Table.Th>
+                <Table.Th>Nama</Table.Th>
+                <Table.Th>Jenis Kelamin</Table.Th>
+                <Table.Th>Jabatan</Table.Th>
+                <Table.Th>Email</Table.Th>
+                <Table.Th>Tanggal Masuk</Table.Th>
+                {canPerformAnyAction && <Table.Th>Aksi</Table.Th>}
+              </tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {educationStaff.data.length > 0 ? (
+                educationStaff.data.map((staff) => (
+                  <tr key={staff.id}>
+                    <Table.Td>
+                      {staff.foto_profil ? (
+                        <img
+                          src={`/storage/${staff.foto_profil}`}
+                          alt="Foto Profil"
+                          className="w-10 h-10 object-cover rounded-full"
+                        />
+                      ) : (
+                        <img
+                          src="/images/default-profile.png"
+                          alt="Default Foto Profil"
+                          className="w-10 h-10 object-cover rounded-full"
+                        />
+                      )}
+                    </Table.Td>
+                    <Table.Td>{staff.nip || '-'}</Table.Td>
+                    <Table.Td>{staff.name}</Table.Td>
+                    <Table.Td>{formatGender(staff.gender)}</Table.Td>
+                    <Table.Td>{staff.position || '-'}</Table.Td>
+                    <Table.Td>{staff.email}</Table.Td>
+                    <Table.Td>{formatDate(staff.hire_date)}</Table.Td>
+                    {canPerformAnyAction && (
+                      <Table.Td>
+                        <div className="flex items-center justify-end gap-2">
+                          {hasAnyPermission(allPermissions, [`${resource} show`]) && (
+                            <Link
+                              href={route(`${resource}.show`, staff.id)}
+                              className="inline-flex items-center p-2 hover:bg-gray-100 rounded"
+                              title="Detail"
+                            >
+                              <IconEye size={18} />
+                            </Link>
+                          )}
+                          {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
+                            <EditButton url={route(`${resource}.edit`, staff.id)} />
+                          )}
+                          {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                            <DeleteButton url={route(`${resource}.destroy`, staff.id)} />
+                          )}
+                        </div>
+                      </Table.Td>
                     )}
-                    {permissions.edit && (
-                        <Link href={route('education-staff.edit', row.id)}>
-                            <EditButton />
-                        </Link>
-                    )}
-                    {permissions.delete && (
-                        <DangerButton onClick={() => handleDelete(row.id)}>
-                            Hapus
-                        </DangerButton>
-                    )}
-                </div>
-            ),
-        },
-    ];
+                  </tr>
+                ))
+              ) : (
+                <Table.Empty colSpan={canPerformAnyAction ? 8 : 7} message="Tidak ada data PTK." />
+              )}
+            </Table.Tbody>
+          </Table>
+        </Card>
 
-    const canPerformAnyAction = permissions.show || permissions.edit || permissions.delete;
-
-    return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Data Pendidik dan Tenaga Kependidikan (PTK)</h2>}
-        >
-            <Head title="Data PTK" />
-
-            <Container>
-                <div className="mb-4 flex items-center justify-between gap-4">
-                    <Search defaultValue={filters.search} />
-                    {permissions.create && (
-                        <AddButton href={route('education-staff.create')}>
-                            Tambah PTK
-                        </AddButton>
-                    )}
-                </div>
-                <Table
-                    columns={columns}
-                    data={educationStaff.data}
-                    // If your Table component handles pagination directly
-                    // Otherwise, use the Pagination component separately
-                >
-                    {!educationStaff.data.length && (
-                        <Table.Empty colSpan={canPerformAnyAction ? 8 : 7} message="Tidak ada data Pendidik dan Tenaga Kependidikan." />
-                    )}
-                </Table>
-                {educationStaff.last_page > 1 && (
-                    <div className="flex items-center justify-center mt-4">
-                        <Pagination links={educationStaff.links} />
-                    </div>
-                )}
-            </Container>
-        </AuthenticatedLayout>
-    );
+        {educationStaff.last_page > 1 && (
+          <div className="flex items-center justify-center mt-4">
+            <Pagination links={educationStaff.links} />
+          </div>
+        )}
+      </Container>
+    </AuthenticatedLayout>
+  );
 }

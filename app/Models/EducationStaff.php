@@ -31,7 +31,7 @@ class EducationStaff extends Model
         'hire_date',
         'last_education',
         'major_education',
-        'foto_profil', // Added
+        'foto_profil',
     ];
 
     protected function casts(): array
@@ -42,9 +42,6 @@ class EducationStaff extends Model
         ];
     }
 
-    /**
-     * Get the user associated with the education staff.
-     */
     public function user()
     {
         return $this->belongsTo(User::class);

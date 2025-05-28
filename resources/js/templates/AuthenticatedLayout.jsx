@@ -290,6 +290,18 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                          </NavLink>
                      )}
 
+                    {user && hasAnyPermission(allPermissions, ['education_staff index']) && (
+                        <NavLink
+                            href={route('education_staff.index')}
+                            active={route().current('education_staff.index')}
+                            isSidebarExpanded={isNavExpanded}
+                            isMobile={isMobile}
+                            icon={IconUsersGroup}
+                        >
+                            PTK
+                        </NavLink>
+                    )}
+
                      {user && hasAnyPermission(allPermissions, ['students index']) && (
                          <NavLink
                             href={route('students.index')}

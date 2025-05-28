@@ -1,115 +1,89 @@
-// resources/js/pages/EducationStaff/Show.jsx
 import React from 'react';
 import AuthenticatedLayout from '@/templates/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
 import Container from '@/components/atoms/Container';
-import PrimaryButton from '@/components/molecules/PrimaryButton';
-import EditButton from '@/components/molecules/EditButton';
-import Card from '@/components/organisms/Card'; // Import Card component
+import Card from '@/components/organisms/Card';
+import { Head, Link, usePage } from '@inertiajs/react';
 import hasAnyPermission from '@/utils/Permissions';
 
-export default function EducationStaffShow({ auth }) {
-    const { educationStaff, auth: pageAuth } = usePage().props;
-    const allPermissions = pageAuth.permissions;
-    const defaultProfilePhoto = '/images/default-profile.png';
+export default function Show({ auth }) {
+  const { educationStaff: staff, auth: pageAuth } = usePage().props;
 
-    const formatJenisKelamin = (gender) => {
-        if (gender === 'L') {
-            return 'Laki-laki';
-        } else if (gender === 'P') {
-            return 'Perempuan';
-        }
-        return '-';
-    };
+  const formatGender = (gender) => {
+    if (gender === 'L') return 'Laki-laki';
+    if (gender === 'P') return 'Perempuan';
+    return '-';
+  };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '-';
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('id-ID', options);
-    };
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
 
-    return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Detail Pendidik dan Tenaga Kependidikan (PTK)</h2>}
-        >
-            <Head title={`Detail PTK: ${educationStaff.name}`} />
+  return (
+    <AuthenticatedLayout
+      user={auth.user}
+      header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Detail PTK</h2>}
+    >
+      <Head title={`Detail PTK: ${staff.name}`} />
 
-            <Container>
-                <Card title="Detail Informasi PTK">
-                    <div className="flex justify-center mb-6">
-                        <img
-                            src={educationStaff.foto_profil ? `/storage/${educationStaff.foto_profil}` : defaultProfilePhoto}
-                            alt="Foto Profil"
-                            className="w-32 h-32 object-cover rounded-full shadow-md"
-                        />
-                    </div>
+      <Container>
+        <Card title="Detail Data Pendidik dan Tenaga Kependidikan">
+          <div className="flex justify-center mb-6">
+            <img
+              src={staff.foto_profil ? `/storage/${staff.foto_profil}` : '/images/default-profile.png'}
+              alt="Foto Profil"
+              className="w-48 h-48 rounded-full object-cover border-2 border-gray-300 shadow-md"
+            />
+          </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Nama Lengkap:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.name}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">NIP:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.nip || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Jenis Kelamin:</p>
-                            <p className="text-lg font-semibold text-gray-900">{formatJenisKelamin(educationStaff.gender)}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Tempat, Tanggal Lahir:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.place_of_birth || '-'}, {formatDate(educationStaff.date_of_birth) || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Alamat:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.address || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Nomor Telepon:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.phone_number || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Email:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.email}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Jabatan:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.position || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Tanggal Masuk:</p>
-                            <p className="text-lg font-semibold text-gray-900">{formatDate(educationStaff.hire_date) || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Pendidikan Terakhir:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.last_education || '-'}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-gray-600">Jurusan Pendidikan:</p>
-                            <p className="text-lg font-semibold text-gray-900">{educationStaff.major_education || '-'}</p>
-                        </div>
-                        {educationStaff.user && (
-                            <div>
-                                <p className="text-sm font-medium text-gray-600">Akun Pengguna:</p>
-                                <p className="text-lg font-semibold text-gray-900">{educationStaff.user.email}</p>
-                            </div>
-                        )}
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <p className="text-sm text-gray-600">NIP:</p>
+              <p className="text-lg font-semibold text-gray-900">{staff.nip || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Nama Lengkap:</p>
+              <p className="text-lg font-semibold text-gray-900">{staff.name || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Jenis Kelamin:</p>
+              <p className="text-lg font-semibold text-gray-900">{formatGender(staff.gender)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Jabatan:</p>
+              <p className="text-lg font-semibold text-gray-900">{staff.position || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Email:</p>
+              <p className="text-lg font-semibold text-gray-900">{staff.email || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Tanggal Masuk:</p>
+              <p className="text-lg font-semibold text-gray-900">{formatDate(staff.hire_date)}</p>
+            </div>
+          </div>
 
-                    <div className="flex justify-end gap-2 mt-6">
-                        <Link href={route('education-staff.index')}>
-                            <PrimaryButton>Kembali</PrimaryButton>
-                        </Link>
-                        {hasAnyPermission(allPermissions, ['education_staff edit']) && (
-                            <Link href={route('education-staff.edit', educationStaff.id)}>
-                                <EditButton>Edit PTK</EditButton>
-                            </Link>
-                        )}
-                    </div>
-                </Card>
-            </Container>
-        </AuthenticatedLayout>
-    );
+          <div className="flex justify-end gap-2">
+            <Link
+              href={route('education_staff.index')}
+              className="inline-flex items-center px-4 py-2 bg-gray-200 rounded-md text-xs font-semibold text-gray-800 hover:bg-gray-300"
+            >
+              Kembali
+            </Link>
+
+            {hasAnyPermission(pageAuth.permissions, ['education_staff edit']) && (
+              <Link
+                href={route('education_staff.edit', staff.id)}
+                className="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-md text-xs font-semibold hover:bg-yellow-600"
+              >
+                Edit
+              </Link>
+            )}
+          </div>
+        </Card>
+      </Container>
+    </AuthenticatedLayout>
+  );
 }

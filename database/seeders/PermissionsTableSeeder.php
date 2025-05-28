@@ -114,6 +114,14 @@ class PermissionsTableSeeder extends Seeder
         $allPermissions = array_merge($allPermissions, $enrollmentPermissions);
         // ==========================================================
 
+        $educationStaffPermissions = [
+            'education_staff index',
+            'education_staff create',
+            'education_staff edit',
+            'education_staff delete',
+            'education_staff show',
+        ];
+        $allPermissions = array_merge($allPermissions, $educationStaffPermissions);
 
         // Buat atau perbarui semua permissions yang didefinisikan
         echo "Seeding Permissions...\\n";
