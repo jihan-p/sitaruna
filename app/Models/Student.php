@@ -46,6 +46,8 @@ class Student extends Model
         'status_akun', // Tambahkan ini
         'foto_profil',
         'user_id',
+        'total_poin_prestasi', // Pastikan ini ada
+        'total_poin_pelanggaran', // Pastikan ini ada
     ];
 
     /**
@@ -74,5 +76,15 @@ class Student extends Model
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
+    }
+
+    public function studentAchievements()
+    {
+        return $this->hasMany(StudentAchievement::class);
+    }
+
+    public function studentViolations()
+    {
+        return $this->hasMany(StudentViolation::class);
     }
 }

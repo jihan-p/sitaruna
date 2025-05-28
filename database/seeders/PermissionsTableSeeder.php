@@ -124,31 +124,39 @@ class PermissionsTableSeeder extends Seeder
         $allPermissions = array_merge($allPermissions, $educationStaffPermissions);
 
     
-        $prestasiTarunaPermissions = [
+        $achievementTypePermissions = [
             'achievement_types index',
             'achievement_types create',
             'achievement_types edit',
             'achievement_types delete',
+        ];
+        $allPermissions = array_merge($allPermissions, $achievementTypePermissions);
+        
+        $studentAchievementPermissions = [
             'student_achievements index',
             'student_achievements create',
             'student_achievements edit',
             'student_achievements delete',
             'student_achievements show',
         ];
-        $allPermissions = array_merge($allPermissions, $prestasiTarunaPermissions);
-
-        $pelanggaranTarunaPermissions = [
+        $allPermissions = array_merge($allPermissions, $studentAchievementPermissions);
+        
+        $violationTypePermissions = [
             'violation_types index',
             'violation_types create',
             'violation_types edit',
             'violation_types delete',
+        ];
+        $allPermissions = array_merge($allPermissions, $violationTypePermissions);
+        
+        $studentViolationPermissions = [
             'student_violations index',
             'student_violations create',
             'student_violations edit',
             'student_violations delete',
             'student_violations show',
         ];
-        $allPermissions = array_merge($allPermissions, $pelanggaranTarunaPermissions);
+        $allPermissions = array_merge($allPermissions, $studentViolationPermissions);
 
         // Buat atau perbarui semua permissions yang didefinisikan
         echo "Seeding Permissions...\\n";

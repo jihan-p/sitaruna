@@ -46,4 +46,14 @@ class EducationStaff extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function studentAchievements()
+    {
+        return $this->hasMany(StudentAchievement::class);
+    }
+
+    public function studentViolations()
+    {
+        return $this->hasMany(StudentViolation::class);
+    }
 }

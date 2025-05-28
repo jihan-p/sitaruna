@@ -64,6 +64,18 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('education_staff', EducationStaffController::class);
 
+    // Rute untuk Jenis Prestasi
+    Route::resource('achievement-types', AchievementTypeController::class);
+
+    // Rute untuk Prestasi Taruna
+    Route::resource('student-achievements', StudentAchievementController::class);
+
+    // Rute untuk Jenis Pelanggaran
+    Route::resource('violation-types', ViolationTypeController::class);
+
+    // Rute untuk Pelanggaran Taruna
+    Route::resource('student-violations', StudentViolationController::class);
+
     Route::post('/set-academic-period', function (Request $request) {
         $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',

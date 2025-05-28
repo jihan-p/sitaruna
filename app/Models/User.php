@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->getAllPermissions()->mapWithKeys(fn($permission) => [$permission['name'] => true]);
     }
+
+    public function educationStaff()
+    {
+        return $this->hasOne(EducationStaff::class);
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
 }
