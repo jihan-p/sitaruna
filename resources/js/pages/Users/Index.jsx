@@ -29,7 +29,9 @@ export default function Index({auth}) {
                 <div className='mb-4 flex items-center justify-between gap-4'>
                     {/* Pass allPermissions to hasAnyPermission */}
                     {hasAnyPermission(allPermissions, [`${resource} create`]) &&
-                        <AddButton url={route('users.create')}/>
+                        <AddButton url={route(`${resource}.create`)}>
+                            Tambah User
+                        </AddButton>
                     }
                     <div className='w-full md:w-4/6'>
                         <Search url={route('users.index')} placeholder={'Search users data by name...'} filter={filters}/>

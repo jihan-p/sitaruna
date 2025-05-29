@@ -32,7 +32,9 @@ export default function Index({ auth }) {
       <Container>
         <div className="mb-4 flex items-center justify-between gap-4">
           {hasAnyPermission(allPermissions, [`${resource} create`]) && (
-            <AddButton url={route(`${resource}.create`)} />
+            <AddButton url={route(`${resource}.create`)}>
+                Tambah Peserta Didik
+            </AddButton>
           )}
           <div className="w-full md:w-4/6">
             <Search

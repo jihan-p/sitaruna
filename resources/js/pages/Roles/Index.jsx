@@ -35,7 +35,9 @@ export default function Index({auth}) {
                 <div className='mb-4 flex items-center justify-between gap-4'>
                     {/* Teruskan allPermissions ke hasAnyPermission */}
                     {hasAnyPermission(allPermissions, [`${resource} create`]) &&
-                        <AddButton url={route('roles.create')}/>
+                        <AddButton url={route(`${resource}.create`)}>
+                            Tambah Role
+                        </AddButton>
                     }
                     <div className='w-full md:w-4/6'>
                         <Search url={route('roles.index')} placeholder={'Search roles data by name...'} filter={filters}/>
