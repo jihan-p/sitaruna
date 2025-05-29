@@ -37,9 +37,10 @@ class EducationStaffController extends Controller implements HasMiddleware
                       ->orWhere('position', 'like', '%' . $search . '%');
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(10) // Default pagination, bisa disesuaikan
+            ->withQueryString(); // Tambahkan ini untuk mempertahankan filter saat paginasi
 
-        return Inertia::render('EducationStaffs/Index', [ // Path Inertia diubah ke Plural
+        return Inertia::render('EducationStaffs/Index', [
             'educationStaff' => $educationStaff,
             'filters' => ['search' => $search],
             'can' => [
@@ -54,7 +55,7 @@ class EducationStaffController extends Controller implements HasMiddleware
     public function create()
     {
         $roles = Role::all();
-        return Inertia::render('EducationStaffs/Create', [ // Path Inertia diubah ke Plural
+        return Inertia::render('EducationStaffs/Create', [
             'roles' => $roles,
         ]);
     }
@@ -107,7 +108,7 @@ class EducationStaffController extends Controller implements HasMiddleware
 
     public function show(EducationStaff $educationStaff)
     {
-        return Inertia::render('EducationStaffs/Show', [ // Path Inertia diubah ke Plural
+        return Inertia::render('EducationStaffs/Show', [
             'educationStaff' => $educationStaff->load('user'),
         ]);
     }
@@ -115,7 +116,7 @@ class EducationStaffController extends Controller implements HasMiddleware
     public function edit(EducationStaff $educationStaff)
     {
         $roles = Role::all();
-        return Inertia::render('EducationStaffs/Edit', [ // Path Inertia diubah ke Plural
+        return Inertia::render('EducationStaffs/Edit', [
             'educationStaff' => $educationStaff->load('user'),
             'roles' => $roles,
         ]);
