@@ -256,7 +256,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                         Dashboard
                     </NavLink>
 
-                    {user && hasAnyPermission(allPermissions, ['roles index']) && (
+                    {user && hasAnyPermission(allPermissions, ['roles index']) && ( // Example of existing correct permission check
                          <NavLink
                             href={route('roles.index')}
                             active={route().current('roles.index')}
@@ -290,7 +290,7 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                          </NavLink>
                      )}
 
-                    {user && hasAnyPermission(allPermissions, ['education_staff index']) && (
+                    {user && hasAnyPermission(allPermissions, ['education-staff index']) && (
                         <NavLink
                             href={route('education_staff.index')}
                             active={route().current('education_staff.index')}
