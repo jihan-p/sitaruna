@@ -114,47 +114,55 @@ class PermissionsTableSeeder extends Seeder
         $allPermissions = array_merge($allPermissions, $enrollmentPermissions);
         // ==========================================================
 
+        // Permissions untuk modul Dashboard (jika ada)
+        $dashboardPermissions = [
+            'dashboard index', // Tambahkan ini jika digunakan
+        ];
+        $allPermissions = array_merge($allPermissions, $dashboardPermissions);
+
         $educationStaffPermissions = [
-            'education_staff index',
-            'education_staff create',
-            'education_staff edit',
-            'education_staff delete',
-            'education_staff show',
+            'education-staff index',
+            'education-staff create',
+            'education-staff edit',
+            'education-staff delete',
+            'education-staff show',
         ];
         $allPermissions = array_merge($allPermissions, $educationStaffPermissions);
 
     
         $achievementTypePermissions = [
-            'achievement_types index',
-            'achievement_types create',
-            'achievement_types edit',
-            'achievement_types delete',
+            'achievement-types index',
+            'achievement-types create',
+            'achievement-types edit',
+            'achievement-types delete',
+            'achievement-types show', // Konsistensi dengan resource lain, tambahkan show
         ];
         $allPermissions = array_merge($allPermissions, $achievementTypePermissions);
         
         $studentAchievementPermissions = [
-            'student_achievements index',
-            'student_achievements create',
-            'student_achievements edit',
-            'student_achievements delete',
-            'student_achievements show',
+            'student-achievements index',
+            'student-achievements create',
+            'student-achievements edit',
+            'student-achievements delete',
+            'student-achievements show',
         ];
         $allPermissions = array_merge($allPermissions, $studentAchievementPermissions);
         
         $violationTypePermissions = [
-            'violation_types index',
-            'violation_types create',
-            'violation_types edit',
-            'violation_types delete',
+            'violation-types index',
+            'violation-types create',
+            'violation-types edit',
+            'violation-types delete',
+            'violation-types show', // Konsistensi dengan resource lain, tambahkan show
         ];
         $allPermissions = array_merge($allPermissions, $violationTypePermissions);
         
         $studentViolationPermissions = [
-            'student_violations index',
-            'student_violations create',
-            'student_violations edit',
-            'student_violations delete',
-            'student_violations show',
+            'student-violations index',
+            'student-violations create',
+            'student-violations edit',
+            'student-violations delete',
+            'student-violations show',
         ];
         $allPermissions = array_merge($allPermissions, $studentViolationPermissions);
 
