@@ -17,11 +17,11 @@ class StudentAchievementController extends Controller implements HasMiddleware /
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:student_achievements index', only: ['index']), // DIPERBARUI
-            new Middleware('permission:student_achievements create', only: ['create', 'store']), // DIPERBARUI
-            new Middleware('permission:student_achievements edit', only: ['edit', 'update']), // DIPERBARUI
-            new Middleware('permission:student_achievements delete', only: ['destroy']), // DIPERBARUI
-            new Middleware('permission:student_achievements show', only: ['show']), // DIPERBARUI
+            new Middleware('permission:student-achievements index', only: ['index']),
+            new Middleware('permission:student-achievements create', only: ['create', 'store']),
+            new Middleware('permission:student-achievements edit', only: ['edit', 'update']),
+            new Middleware('permission:student-achievements delete', only: ['destroy']),
+            new Middleware('permission:student-achievements show', only: ['show']),
         ];
     }
 
@@ -37,7 +37,7 @@ class StudentAchievementController extends Controller implements HasMiddleware /
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('StudentAchievement/Index', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentAchievements/Index', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentAchievements' => $studentAchievements, // DIPERBARUI
             'filters' => $request->only(['search']),
         ]);
@@ -48,7 +48,7 @@ class StudentAchievementController extends Controller implements HasMiddleware /
         $students = Student::select('id', 'nama_lengkap', 'nit')->orderBy('nama_lengkap')->get();
         $achievementTypes = AchievementType::where('aktif', true)->select('id', 'deskripsi', 'poin')->orderBy('deskripsi')->get(); // DIPERBARUI
 
-        return Inertia::render('StudentAchievement/Create', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentAchievements/Create', [ // DIPERBARUI PATH INERTIA (Plural)
             'students' => $students,
             'achievementTypes' => $achievementTypes, // DIPERBARUI
         ]);
@@ -92,7 +92,7 @@ class StudentAchievementController extends Controller implements HasMiddleware /
     public function show(StudentAchievement $studentAchievement) // DIPERBARUI
     {
         $studentAchievement->load(['student', 'achievementType', 'educationStaff']); // DIPERBARUI
-        return Inertia::render('StudentAchievement/Show', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentAchievements/Show', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentAchievement' => $studentAchievement, // DIPERBARUI
         ]);
     }
@@ -104,7 +104,7 @@ class StudentAchievementController extends Controller implements HasMiddleware /
 
         $studentAchievement->load(['student', 'achievementType']); // DIPERBARUI
 
-        return Inertia::render('StudentAchievement/Edit', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentAchievements/Edit', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentAchievement' => $studentAchievement, // DIPERBARUI
             'students' => $students,
             'achievementTypes' => $achievementTypes, // DIPERBARUI

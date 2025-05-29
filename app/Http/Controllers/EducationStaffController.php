@@ -19,11 +19,11 @@ class EducationStaffController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:education_staff index', only: ['index']),
-            new Middleware('permission:education_staff create', only: ['create', 'store']),
-            new Middleware('permission:education_staff edit', only: ['edit', 'update']),
-            new Middleware('permission:education_staff delete', only: ['destroy']),
-            new Middleware('permission:education_staff show', only: ['show']),
+            new Middleware('permission:education-staff index', only: ['index']),
+            new Middleware('permission:education-staff create', only: ['create', 'store']),
+            new Middleware('permission:education-staff edit', only: ['edit', 'update']),
+            new Middleware('permission:education-staff delete', only: ['destroy']),
+            new Middleware('permission:education-staff show', only: ['show']),
         ];
     }
 
@@ -39,14 +39,14 @@ class EducationStaffController extends Controller implements HasMiddleware
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('EducationStaff/Index', [
+        return Inertia::render('EducationStaffs/Index', [ // Path Inertia diubah ke Plural
             'educationStaff' => $educationStaff,
             'filters' => ['search' => $search],
             'can' => [
-                'create' => $request->user()->can('education_staff create'),
-                'edit' => $request->user()->can('education_staff edit'),
-                'delete' => $request->user()->can('education_staff delete'),
-                'show' => $request->user()->can('education_staff show'),
+                'create' => $request->user()->can('education-staff create'),
+                'edit' => $request->user()->can('education-staff edit'),
+                'delete' => $request->user()->can('education-staff delete'),
+                'show' => $request->user()->can('education-staff show'),
             ],
         ]);
     }
@@ -54,7 +54,7 @@ class EducationStaffController extends Controller implements HasMiddleware
     public function create()
     {
         $roles = Role::all();
-        return Inertia::render('EducationStaff/Create', [
+        return Inertia::render('EducationStaffs/Create', [ // Path Inertia diubah ke Plural
             'roles' => $roles,
         ]);
     }
@@ -101,13 +101,13 @@ class EducationStaffController extends Controller implements HasMiddleware
             'foto_profil' => $fotoProfilPath,
         ]));
 
-        return redirect()->route('education_staff.index')
+        return redirect()->route('education-staff.index') // Nama rute diubah ke kebab-case
                          ->with('success', 'Data PTK berhasil ditambahkan.');
     }
 
     public function show(EducationStaff $educationStaff)
     {
-        return Inertia::render('EducationStaff/Show', [
+        return Inertia::render('EducationStaffs/Show', [ // Path Inertia diubah ke Plural
             'educationStaff' => $educationStaff->load('user'),
         ]);
     }
@@ -115,7 +115,7 @@ class EducationStaffController extends Controller implements HasMiddleware
     public function edit(EducationStaff $educationStaff)
     {
         $roles = Role::all();
-        return Inertia::render('EducationStaff/Edit', [
+        return Inertia::render('EducationStaffs/Edit', [ // Path Inertia diubah ke Plural
             'educationStaff' => $educationStaff->load('user'),
             'roles' => $roles,
         ]);
@@ -162,7 +162,7 @@ class EducationStaffController extends Controller implements HasMiddleware
             ]);
         }
 
-        return redirect()->route('education_staff.index')
+        return redirect()->route('education-staff.index') // Nama rute diubah ke kebab-case
                          ->with('success', 'Data PTK berhasil diperbarui.');
     }
 

@@ -8,7 +8,7 @@ import Search from '@/components/molecules/Search';
 import AddButton from '@/components/molecules/AddButton';
 import EditButton from '@/components/molecules/EditButton';
 import DeleteButton from '@/components/molecules/DeleteButton';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react'; // router tidak lagi dibutuhkan jika handleDelete lokal dihapus
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Index({ auth }) {
@@ -18,17 +18,6 @@ export default function Index({ auth }) {
     const resource = 'enrollments';
 
     const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
-
-    const handleDelete = (id) => {
-        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-            router.delete(route(`${resource}.destroy`, id), {
-                onSuccess: () => {
-                },
-                onError: () => {
-                }
-            });
-        }
-    };
 
     return (
         <AuthenticatedLayout
@@ -93,7 +82,7 @@ export default function Index({ auth }) {
                                                         <EditButton url={route(`${resource}.edit`, item.id)} />
                                                     )}
                                                     {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
-                                                        <DeleteButton onClick={() => handleDelete(item.id)} />
+                                            <DeleteButton url={route(`${resource}.destroy`, item.id)} />
                                                     )}
                                                 </div>
                                             </Table.Td>

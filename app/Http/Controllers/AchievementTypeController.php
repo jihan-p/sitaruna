@@ -13,10 +13,10 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:achievement_types index', only: ['index']), // DIPERBARUI
-            new Middleware('permission:achievement_types create', only: ['create', 'store']), // DIPERBARUI
-            new Middleware('permission:achievement_types edit', only: ['edit', 'update']), // DIPERBARUI
-            new Middleware('permission:achievement_types delete', only: ['destroy']), // DIPERBARUI
+            new Middleware('permission:achievement-types index', only: ['index']),
+            new Middleware('permission:achievement-types create', only: ['create', 'store']),
+            new Middleware('permission:achievement-types edit', only: ['edit', 'update']),
+            new Middleware('permission:achievement-types delete', only: ['destroy']),
         ];
     }
 
@@ -30,7 +30,7 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('AchievementType/Index', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('AchievementTypes/Index', [ // DIPERBARUI PATH INERTIA (Plural)
             'achievementTypes' => $achievementTypes, // DIPERBARUI
             'filters' => $request->only(['search']),
         ]);
@@ -38,7 +38,7 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
 
     public function create()
     {
-        return Inertia::render('AchievementType/Create'); // DIPERBARUI PATH INERTIA
+        return Inertia::render('AchievementTypes/Create'); // DIPERBARUI PATH INERTIA (Plural)
     }
 
     public function store(Request $request)
@@ -57,7 +57,7 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
 
     public function edit(AchievementType $achievementType) // DIPERBARUI
     {
-        return Inertia::render('AchievementType/Edit', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('AchievementTypes/Edit', [ // DIPERBARUI PATH INERTIA (Plural)
             'achievementType' => $achievementType, // DIPERBARUI
         ]);
     }

@@ -13,10 +13,10 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:violation_types index', only: ['index']), // DIPERBARUI
-            new Middleware('permission:violation_types create', only: ['create', 'store']), // DIPERBARUI
-            new Middleware('permission:violation_types edit', only: ['edit', 'update']), // DIPERBARUI
-            new Middleware('permission:violation_types delete', only: ['destroy']), // DIPERBARUI
+            new Middleware('permission:violation-types index', only: ['index']),
+            new Middleware('permission:violation-types create', only: ['create', 'store']),
+            new Middleware('permission:violation-types edit', only: ['edit', 'update']),
+            new Middleware('permission:violation-types delete', only: ['destroy']),
         ];
     }
 
@@ -31,7 +31,7 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('ViolationType/Index', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('ViolationTypes/Index', [ // DIPERBARUI PATH INERTIA (Plural)
             'violationTypes' => $violationTypes, // DIPERBARUI
             'filters' => $request->only(['search']),
         ]);
@@ -39,7 +39,7 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
 
     public function create()
     {
-        return Inertia::render('ViolationType/Create'); // DIPERBARUI PATH INERTIA
+        return Inertia::render('ViolationTypes/Create'); // DIPERBARUI PATH INERTIA (Plural)
     }
 
     public function store(Request $request)
@@ -59,7 +59,7 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
 
     public function edit(ViolationType $violationType) // DIPERBARUI
     {
-        return Inertia::render('ViolationType/Edit', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('ViolationTypes/Edit', [ // DIPERBARUI PATH INERTIA (Plural)
             'violationType' => $violationType, // DIPERBARUI
         ]);
     }

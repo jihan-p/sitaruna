@@ -17,11 +17,11 @@ class StudentViolationController extends Controller implements HasMiddleware // 
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:student_violations index', only: ['index']), // DIPERBARUI
-            new Middleware('permission:student_violations create', only: ['create', 'store']), // DIPERBARUI
-            new Middleware('permission:student_violations edit', only: ['edit', 'update']), // DIPERBARUI
-            new Middleware('permission:student_violations delete', only: ['destroy']), // DIPERBARUI
-            new Middleware('permission:student_violations show', only: ['show']), // DIPERBARUI
+            new Middleware('permission:student-violations index', only: ['index']),
+            new Middleware('permission:student-violations create', only: ['create', 'store']),
+            new Middleware('permission:student-violations edit', only: ['edit', 'update']),
+            new Middleware('permission:student-violations delete', only: ['destroy']),
+            new Middleware('permission:student-violations show', only: ['show']),
         ];
     }
 
@@ -37,7 +37,7 @@ class StudentViolationController extends Controller implements HasMiddleware // 
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('StudentViolation/Index', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentViolations/Index', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentViolations' => $studentViolations, // DIPERBARUI
             'filters' => $request->only(['search']),
         ]);
@@ -48,7 +48,7 @@ class StudentViolationController extends Controller implements HasMiddleware // 
         $students = Student::select('id', 'nama_lengkap', 'nit')->orderBy('nama_lengkap')->get();
         $violationTypes = ViolationType::where('aktif', true)->select('id', 'deskripsi', 'poin', 'kategori')->orderBy('deskripsi')->get(); // DIPERBARUI
 
-        return Inertia::render('StudentViolation/Create', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentViolations/Create', [ // DIPERBARUI PATH INERTIA (Plural)
             'students' => $students,
             'violationTypes' => $violationTypes, // DIPERBARUI
         ]);
@@ -93,7 +93,7 @@ class StudentViolationController extends Controller implements HasMiddleware // 
     public function show(StudentViolation $studentViolation) // DIPERBARUI
     {
         $studentViolation->load(['student', 'violationType', 'educationStaff']); // DIPERBARUI
-        return Inertia::render('StudentViolation/Show', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentViolations/Show', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentViolation' => $studentViolation, // DIPERBARUI
         ]);
     }
@@ -105,7 +105,7 @@ class StudentViolationController extends Controller implements HasMiddleware // 
 
         $studentViolation->load(['student', 'violationType']); // DIPERBARUI
 
-        return Inertia::render('StudentViolation/Edit', [ // DIPERBARUI PATH INERTIA
+        return Inertia::render('StudentViolations/Edit', [ // DIPERBARUI PATH INERTIA (Plural)
             'studentViolation' => $studentViolation, // DIPERBARUI
             'students' => $students,
             'violationTypes' => $violationTypes, // DIPERBARUI
