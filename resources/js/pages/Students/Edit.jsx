@@ -8,7 +8,7 @@ import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import FormGroup from '@/components/molecules/FormGroup';
 import TextInput from '@/components/atoms/TextInput';
-import PrimaryButton from '@/components/molecules/PrimaryButton';
+import PrimaryButton from '@/components/molecules/PrimaryButton';import CancelButton from '@/components/molecules/CancelButton';
 
 export default function Edit({ auth }) {
   const { student } = usePage().props;
@@ -214,14 +214,9 @@ export default function Edit({ auth }) {
               )}
             </FormGroup>
 
-            <div className="flex items-center gap-2 mt-4">
-              <PrimaryButton type="submit" disabled={processing}>Simpan Perubahan</PrimaryButton>
-              <Link
-                href={route(`${routeResource}.index`)}
-                className="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
-              >
-                Kembali
-              </Link>
+            <div className="flex items-center justify-end gap-2 mt-4">
+                <CancelButton url={route(`${routeResource}.index`)}>Kembali</CancelButton>
+                <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
             </div>
           </form>
         </Card>

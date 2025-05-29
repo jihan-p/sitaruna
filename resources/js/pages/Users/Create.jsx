@@ -147,10 +147,9 @@ export default function Create({auth}) {
                             </FormGroup>
                         </div>
 
-                        <div className='flex items-center gap-2'>
-                            {/* Gunakan molekul Button jika sudah dibuat (Langkah 1) */}
-                            <PrimaryButton type={'submit'} disabled={processing}> Save Data </PrimaryButton>
-                            <CancelButton url={route('users.index')}> Go Back </CancelButton> {/* Jika teks default di molekul */}
+                    <div className='flex items-center justify-end gap-2'>
+                        <CancelButton url={route('users.index')}> Go Back </CancelButton> {/* Atau "Kembali" */}
+                        <PrimaryButton type={'submit'} disabled={processing}> Simpan </PrimaryButton>
                         </div>
                     </form>
                 </Card>

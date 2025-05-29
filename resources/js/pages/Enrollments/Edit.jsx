@@ -167,12 +167,10 @@ export default function Edit({ auth }) {
 
                         {/* Tombol Aksi */}
                         <div className="flex justify-end gap-4">
-                            <CancelButton href={route(`${routeResourceName}.index`)}>
+                            <CancelButton url={route(`${routeResourceName}.index`)}>
                                 Batal
                             </CancelButton>
-                            <PrimaryButton type="submit" disabled={processing}>
-                                Simpan Perubahan
-                            </PrimaryButton>
+                            <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
                         </div>
                     </form>
                 </Card>

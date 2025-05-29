@@ -142,7 +142,7 @@ export default function Create({ auth }) {
                         </FormGroup>
 
                         <div className="flex justify-end gap-4">
-                            <CancelButton href={route(`${routeResourceName}.index`)}>
+                            <CancelButton url={route(`${routeResourceName}.index`)}>
                                 Batal
                             </CancelButton>
                             <PrimaryButton type="submit" disabled={processing}>

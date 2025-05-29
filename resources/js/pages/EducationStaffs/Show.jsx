@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/templates/AuthenticatedLayout';
 import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import { Head, Link, usePage } from '@inertiajs/react';
+    import CancelButton from '@/components/molecules/CancelButton'; // Assuming CancelButton exists
+    import EditButton from '@/components/molecules/EditButton'; // Assuming EditButton exists
 import hasAnyPermission from '@/utils/Permissions';
 
 export default function Show({ auth }) {
@@ -66,20 +68,10 @@ export default function Show({ auth }) {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Link
-              href={route('education_staff.index')}
-              className="inline-flex items-center px-4 py-2 bg-gray-200 rounded-md text-xs font-semibold text-gray-800 hover:bg-gray-300"
-            >
-              Kembali
-            </Link>
+            <CancelButton url={route('education_staff.index')}>Kembali</CancelButton>
 
             {hasAnyPermission(pageAuth.permissions, ['education_staff edit']) && (
-              <Link
-                href={route('education_staff.edit', staff.id)}
-                className="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-md text-xs font-semibold hover:bg-yellow-600"
-              >
-                Edit
-              </Link>
+              <EditButton url={route('education_staff.edit', staff.id)} />
             )}
           </div>
         </Card>

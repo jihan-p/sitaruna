@@ -69,9 +69,9 @@ export default function Edit({ auth, major }) {
               />
             </FormGroup>
 
-            <div className="flex items-center gap-2 mt-4">
-              <PrimaryButton type="submit" disabled={processing}>Perbarui Data</PrimaryButton>
-              <CancelButton url={route(`${routeResourceName}.index`)}>Kembali</CancelButton>
+        <div className="flex items-center justify-end gap-2 mt-4">
+          <CancelButton url={route(`${routeResourceName}.index`)}>Kembali</CancelButton>
+          <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
             </div>
           </form>
         </Card>

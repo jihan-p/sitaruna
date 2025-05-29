@@ -49,7 +49,13 @@ export default function EducationStaffIndex({ auth }) {
               Tambah PTK
             </AddButton>
           )}
-          <Search defaultValue={filters.search} />
+          <div className="w-full md:w-4/6">
+            <Search
+              url={route(`${resource}.index`)}
+              placeholder="Cari PTK berdasarkan nama, NIP, jabatan..."
+              filter={filters}
+            />
+          </div>
         </div>
         <Card title="Daftar Pendidik dan Tenaga Kependidikan">
           <Table>

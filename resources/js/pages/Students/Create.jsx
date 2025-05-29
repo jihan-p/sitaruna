@@ -211,9 +211,9 @@ export default function Create({ auth }) {
                 )}
                 </FormGroup>
 
-            <div className="flex items-center gap-2 mt-4">
-              <PrimaryButton type="submit" disabled={processing}>Simpan</PrimaryButton>
+            <div className="flex items-center justify-end gap-2 mt-4">
               <CancelButton url={route(`${routeResource}.index`)}>Batal</CancelButton>
+              <PrimaryButton type="submit" disabled={processing}>Simpan</PrimaryButton>
             </div>
           </form>
         </Card>

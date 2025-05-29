@@ -8,7 +8,8 @@ import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import FormGroup from '@/components/molecules/FormGroup';
 import TextInput from '@/components/atoms/TextInput';
-import PrimaryButton from '@/components/molecules/PrimaryButton';
+import CancelButton from '@/components/molecules/CancelButton'; // Assuming CancelButton exists
+import EditButton from '@/components/molecules/EditButton'; // Assuming EditButton exists
 import hasAnyPermission from '@/utils/Permissions';
 import { IconEye } from '@tabler/icons-react'; // Make sure IconEye is imported if used
 
@@ -99,20 +100,11 @@ export default function Show({ auth }) {
           </div>
 
           <div className="flex justify-end gap-2 mt-6">
-            <Link
-              href={route('students.index')}
-              className="inline-flex items-center justify-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full md:w-auto"
-            >
-              Kembali
-            </Link>
+            <CancelButton url={route('students.index')}>Kembali</CancelButton>
 
-            {auth.user && hasAnyPermission(['students edit']) && (
-              <Link
-                href={route('students.edit', student.id)}
-                className="inline-flex items-center justify-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full md:w-auto"
-              >
-                Edit
-              </Link>
+            {/* Assuming pageAuth.permissions is available or use auth.permissions if that's the source */}
+            {hasAnyPermission(usePage().props.auth.permissions, ['students edit']) && (
+              <EditButton url={route('students.edit', student.id)} />
             )}
           </div>
         </Card>

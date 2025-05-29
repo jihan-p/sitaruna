@@ -149,9 +149,9 @@ export default function Edit({auth}) {
                             </FormGroup>
                         </div>
 
-                        <div className='flex items-center gap-2'>
-                            <PrimaryButton type={'submit'} disabled={processing}> Save Data </PrimaryButton>
-                            <CancelButton url={route('users.index')}> Go Back </CancelButton>
+                    <div className='flex items-center justify-end gap-2'>
+                        <CancelButton url={route('users.index')}> Go Back </CancelButton> {/* Atau "Kembali" */}
+                        <PrimaryButton type={'submit'} disabled={processing}> Perbarui </PrimaryButton>
                         </div>
                     </form>
                 </Card>

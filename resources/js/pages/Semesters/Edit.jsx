@@ -88,7 +88,7 @@ export default function Edit({ auth, semester, academicYears }) {
 
             <div className="flex justify-end gap-2">
               <CancelButton url={route(`${routeResource}.index`)}>Batal</CancelButton>
-              <PrimaryButton type="submit" disabled={processing}>Simpan</PrimaryButton>
+          <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
             </div>
           </form>
         </Card>
