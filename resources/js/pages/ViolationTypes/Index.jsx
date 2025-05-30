@@ -6,6 +6,7 @@ import Table from '@/components/organisms/Table';
 import Pagination from '@/components/molecules/Pagination';
 import Search from '@/components/molecules/Search';
 import AddButton from '@/components/molecules/AddButton';
+import ImportButton from '@/components/molecules/ImportButton'; // Import ImportButton
 import EditButton from '@/components/molecules/EditButton';
 import DeleteButton from '@/components/molecules/DeleteButton';
 import { Head, usePage } from '@inertiajs/react';
@@ -19,7 +20,7 @@ export default function ViolationTypeIndex({ auth }) {
   const resource = 'violation-types'; // Sesuai dengan nama rute di web.php
 
   const canPerformAnyAction = hasAnyPermission(allPermissions, [
-    `${resource} edit`, `${resource} delete`
+    `${resource} edit`, `${resource} delete`,
   ]);
 
   const formatDate = (dateString) => {
@@ -37,12 +38,19 @@ export default function ViolationTypeIndex({ auth }) {
       <Head title="Manajemen Jenis Pelanggaran" />
 
       <Container>
-        <div className="mb-4 flex items-center justify-between gap-4">
-          {hasAnyPermission(allPermissions, [`${resource} create`]) && (
-            <AddButton url={route(`${resource}.create`)}>
-              Tambah Jenis Pelanggaran
-            </AddButton>
-          )}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            {hasAnyPermission(allPermissions, [`${resource} create`]) && (
+              <AddButton url={route(`${resource}.create`)}>
+                Tambah
+              </AddButton>
+            )}
+            {hasAnyPermission(allPermissions, [`${resource} import`]) && ( // Tambahkan permission check untuk import
+              <ImportButton url={route(`${resource}.import.form`)}> {/* Ganti 'import.form' dengan nama rute Anda */}
+                Impor
+              </ImportButton>
+            )}
+          </div>
           <div className="w-full md:w-4/6">
             <Search
               url={route(`${resource}.index`)}
