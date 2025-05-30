@@ -85,6 +85,7 @@ Route::resource('education-staff', EducationStaffController::class);
     // Di dalam grup middleware auth
     Route::get('violation-types/import', [ViolationTypeController::class, 'showImportForm'])->name('violation-types.import.form');
     Route::post('violation-types/import', [ViolationTypeController::class, 'processImport'])->name('violation-types.import.process');
+    Route::get('violation-types/import/example', [ViolationTypeController::class, 'downloadImportExample'])->name('violation-types.import.example');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

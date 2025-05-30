@@ -6,7 +6,7 @@ import FormGroup from '@/components/molecules/FormGroup';
 import PrimaryButton from '@/components/molecules/PrimaryButton';
 import CancelButton from '@/components/molecules/CancelButton';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import InputError from '@/components/atoms/InputError'; // Untuk menampilkan error spesifik file
+import InputError from '@/components/atoms/InputError';
 
 export default function ImportViolationTypeForm({ auth }) {
   const resource = 'violation-types';
@@ -42,8 +42,14 @@ export default function ImportViolationTypeForm({ auth }) {
                 id="import_file"
                 name="import_file"
                 onChange={(e) => setData('import_file', e.target.files[0])}
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2"
               />
+              <a
+                href={route(`${resource}.import.example`)}
+                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                Unduh file contoh (.xlsx)
+              </a>
               {/* Menampilkan error spesifik dari validasi backend jika ada */}
               {pageErrors.import_file && !errors.import_file && (
                 <InputError message={pageErrors.import_file} className="mt-2" />

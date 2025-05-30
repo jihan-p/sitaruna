@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use App\Imports\ViolationTypesImport; // Asumsi Anda akan membuat kelas Import ini
+use Illuminate\Support\Facades\File; // Untuk memeriksa keberadaan file
 use Illuminate\Routing\Controllers\Middleware;
 
 class ViolationTypeController extends Controller implements HasMiddleware // NAMA CLASS DIPERBARUI
@@ -128,5 +129,21 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
             // Tangani error umum lainnya
             return back()->withErrors(['import_file' => 'Terjadi kesalahan saat mengimpor file: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Download the example import file for violation types.
+     */
+    public function downloadImportExample()
+    {
+        $filePath = public_path('examples/contoh_import_jenis_pelanggaran.xlsx');
+
+        if (!File::exists($filePath)) {
+            // Jika file tidak ditemukan, kembalikan error 404 atau pesan yang sesuai
+            return back()->with('error', 'File contoh tidak ditemukan.');
+            // atau abort(404, 'File contoh tidak ditemukan.');
+        }
+
+        return response()->download($filePath);
     }
 }
