@@ -75,12 +75,16 @@ Route::resource('education-staff', EducationStaffController::class);
     Route::resource('student-achievements', StudentAchievementController::class);
 
     // Rute untuk Jenis Pelanggaran
-    Route::resource('violation-types', ViolationTypeController::class);
+    Route::resource('violation-types', ViolationTypeController::class)->except(['show']);
 
     // Rute untuk Pelanggaran Taruna
     Route::resource('student-violations', StudentViolationController::class);
 
     Route::post('/set-academic-period', [AcademicPeriodController::class, 'setActiveAcademicPeriod'])->name('set.academic.period');
+
+    // Di dalam grup middleware auth
+    Route::get('violation-types/import', [ViolationTypeController::class, 'showImportForm'])->name('violation-types.import.form');
+    Route::post('violation-types/import', [ViolationTypeController::class, 'processImport'])->name('violation-types.import.process');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
