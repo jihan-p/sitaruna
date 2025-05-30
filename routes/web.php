@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class)->except('show');
 
     // users route
-    Route::resource('/users', UserController::class);
+Route::resource('/users', UserController::class)->except('show');
 
     // students route
     Route::resource('/students', StudentController::class);
@@ -54,15 +54,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('academic-years', AcademicYearController::class);
 
     // semesters route
-    Route::resource('semesters', SemesterController::class);
+Route::resource('semesters', SemesterController::class)->except('show');
 
     // class route
-    Route::resource('classes', ClassController::class);
+Route::resource('classes', ClassController::class)->except('show');
 
     // enrollments route
     Route::resource('enrollments', EnrollmentController::class);
 
-    Route::resource('education_staff', EducationStaffController::class);
+Route::resource('education-staff', EducationStaffController::class);
 
     // Rute untuk Jenis Prestasi
     Route::resource('achievement-types', AchievementTypeController::class);
@@ -76,19 +76,7 @@ Route::middleware('auth')->group(function () {
     // Rute untuk Pelanggaran Taruna
     Route::resource('student-violations', StudentViolationController::class);
 
-    Route::post('/set-academic-period', function (Request $request) {
-        $request->validate([
-            'academic_year_id' => 'required|exists:academic_years,id',
-            'semester_id' => 'required|exists:semesters,id',
-        ]);
-
-        session([
-            'active_academic_year_id' => $request->academic_year_id,
-            'active_semester_id' => $request->semester_id,
-        ]);
-
-        return back()->with('success', 'Academic period updated successfully.');
-    })->name('set.academic.period'); // THIS IS THE MISSING ROUTE NAME
+    Route::post('/set-academic-period', [AcademicPeriodController::class, 'setActiveAcademicPeriod'])->name('set.academic.period');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

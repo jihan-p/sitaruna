@@ -53,17 +53,15 @@ class AcademicPeriodController extends Controller
                             ->first();
 
         if (!$semester) {
-            return response()->json(['message' => 'Invalid academic year and semester combination.'], 422);
+            // Redirect back with an error, similar to how form validation errors are handled
+            return back()->withErrors(['semester_id' => 'Kombinasi tahun ajaran dan semester tidak valid.'])->withInput();
         }
 
         // Simpan ke session
         Session::put('active_academic_year_id', $request->academic_year_id);
         Session::put('active_semester_id', $request->semester_id);
 
-        return response()->json([
-            'message' => 'Active academic period set successfully.',
-            'active_academic_year_id' => $request->academic_year_id,
-            'active_semester_id' => $request->semester_id,
-        ]);
+        // Redirect back with a success message, consistent with typical Inertia form handling
+        return back()->with('success', 'Periode akademik berhasil diperbarui.');
     }
 }

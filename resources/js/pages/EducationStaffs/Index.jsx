@@ -16,7 +16,7 @@ export default function EducationStaffIndex({ auth }) {
   const { educationStaff, filters, auth: pageAuth } = usePage().props;
   const allPermissions = pageAuth.permissions;
 
-  const resource = 'education_staff';
+  const resource = 'education-staff';
 
   const formatGender = (gender) => {
     if (gender === 'L') return 'Laki-laki';

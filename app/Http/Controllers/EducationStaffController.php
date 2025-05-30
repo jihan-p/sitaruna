@@ -102,7 +102,7 @@ class EducationStaffController extends Controller implements HasMiddleware
             'foto_profil' => $fotoProfilPath,
         ]));
 
-        return redirect()->route('education-staff.index') // Nama rute diubah ke kebab-case
+return redirect()->route('education-staff.index')
                          ->with('success', 'Data PTK berhasil ditambahkan.');
     }
 
@@ -163,7 +163,7 @@ class EducationStaffController extends Controller implements HasMiddleware
             ]);
         }
 
-        return redirect()->route('education-staff.index') // Nama rute diubah ke kebab-case
+return redirect()->route('education-staff.index')
                          ->with('success', 'Data PTK berhasil diperbarui.');
     }
 

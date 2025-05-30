@@ -9,6 +9,7 @@ import hasAnyPermission from '@/utils/Permissions';
 
 export default function Show({ auth }) {
   const { educationStaff: staff, auth: pageAuth } = usePage().props;
+  const resource = 'education-staff'; // Definisikan nama resource yang benar
 
   const formatGender = (gender) => {
     if (gender === 'L') return 'Laki-laki';
@@ -68,10 +69,10 @@ export default function Show({ auth }) {
           </div>
 
           <div className="flex justify-end gap-2">
-            <CancelButton url={route('education_staff.index')}>Kembali</CancelButton>
+            <CancelButton url={route(`${resource}.index`)}>Kembali</CancelButton>
 
             {hasAnyPermission(pageAuth.permissions, ['education_staff edit']) && (
-              <EditButton url={route('education_staff.edit', staff.id)} />
+              <EditButton url={route(`${resource}.edit`, staff.id)} />
             )}
           </div>
         </Card>

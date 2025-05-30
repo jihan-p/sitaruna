@@ -292,8 +292,8 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
 
                     {user && hasAnyPermission(allPermissions, ['education-staff index']) && (
                         <NavLink
-                            href={route('education_staff.index')}
-                            active={route().current('education_staff.index')}
+                            href={route('education-staff.index')}
+                            active={route().current('education-staff.index')}
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
                             icon={IconUsersGroup}
