@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pelanggaran_taruna', function (Blueprint $table) {
+        Schema::create('student_violations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade'); // Link ke tabel students
-            $table->foreignId('jenis_pelanggaran_id')->constrained('jenis_pelanggaran')->onDelete('cascade'); // Link ke tabel jenis_pelanggaran
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->foreignId('violation_type_id')->constrained('violation_types')->onDelete('cascade'); // Mengacu ke tabel violation_types
             $table->date('tanggal_pelanggaran');
             $table->time('jam_pelanggaran')->nullable();
             $table->text('keterangan_kejadian')->nullable(); // Detail insiden pelanggaran
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pelanggaran_taruna');
+        Schema::dropIfExists('student_violations');
     }
 };

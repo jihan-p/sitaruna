@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('prestasi_taruna', function (Blueprint $table) {
+        Schema::create('student_achievements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade'); // Link ke tabel students
             $table->foreignId('jenis_prestasi_id')->constrained('jenis_prestasi')->onDelete('cascade'); // Link ke tabel jenis_prestasi

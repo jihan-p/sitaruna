@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jenis_pelanggaran', function (Blueprint $table) {
+        Schema::create('violation_types', function (Blueprint $table) {
             $table->id();
             $table->string('kategori'); // e.g., "Pelanggaran Sangat Berat", "Pelanggaran Ringan"
             $table->string('deskripsi'); // e.g., "Membocorkan hal-hal yang bersifat rahasia negara"
             $table->integer('poin'); // Poin yang dikurangi
             $table->boolean('aktif')->default(true); // Status aktif/nonaktif jenis pelanggaran
+            $table->date('tanggal_berlaku')->nullable(); // Tanggal mulai berlaku
+            $table->date('tanggal_akhir_berlaku')->nullable(); // Tanggal akhir berlaku (opsional)
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jenis_pelanggaran');
+        Schema::dropIfExists('violation_types');
     }
 };

@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jenis_prestasi', function (Blueprint $table) {
+        Schema::create('achievement_types', function (Blueprint $table) {
             $table->id();
             $table->string('deskripsi'); // e.g., "Menjadi juara kegiatan tingkat regional dan internasional"
             $table->integer('poin'); // Poin yang didapat
             $table->boolean('aktif')->default(true); // Status aktif/nonaktif jenis prestasi
+            $table->date('tanggal_berlaku')->nullable(); // Tanggal mulai berlaku
+            $table->date('tanggal_akhir_berlaku')->nullable(); // Tanggal akhir berlaku (opsional)
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jenis_prestasi');
+        Schema::dropIfExists('achievement_types'); // Pastikan nama tabel konsisten
     }
 };

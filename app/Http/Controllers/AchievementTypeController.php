@@ -47,6 +47,8 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
             'deskripsi' => 'required|string|max:255',
             'poin' => 'required|integer|min:1',
             'aktif' => 'boolean',
+            'tanggal_berlaku' => 'nullable|date',
+            'tanggal_akhir_berlaku' => 'nullable|date|after_or_equal:tanggal_berlaku',
         ]);
 
         AchievementType::create($request->all()); // DIPERBARUI
@@ -68,6 +70,8 @@ class AchievementTypeController extends Controller implements HasMiddleware // N
             'deskripsi' => 'required|string|max:255',
             'poin' => 'required|integer|min:1',
             'aktif' => 'boolean',
+            'tanggal_berlaku' => 'nullable|date',
+            'tanggal_akhir_berlaku' => 'nullable|date|after_or_equal:tanggal_berlaku',
         ]);
 
         $achievementType->update($request->all()); // DIPERBARUI

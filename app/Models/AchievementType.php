@@ -14,10 +14,14 @@ class AchievementType extends Model
         'deskripsi',
         'poin',
         'aktif',
+        'tanggal_berlaku',
+        'tanggal_akhir_berlaku',
     ];
 
     protected $casts = [
         'aktif' => 'boolean',
+        'tanggal_berlaku' => 'date',
+        'tanggal_akhir_berlaku' => 'date',
     ];
 
     public function studentAchievements()

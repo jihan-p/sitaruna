@@ -49,6 +49,8 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
             'deskripsi' => 'required|string|max:255',
             'poin' => 'required|integer|min:1',
             'aktif' => 'boolean',
+            'tanggal_berlaku' => 'nullable|date',
+            'tanggal_akhir_berlaku' => 'nullable|date|after_or_equal:tanggal_berlaku',
         ]);
 
         ViolationType::create($request->all()); // DIPERBARUI
@@ -71,6 +73,8 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
             'deskripsi' => 'required|string|max:255',
             'poin' => 'required|integer|min:1',
             'aktif' => 'boolean',
+            'tanggal_berlaku' => 'nullable|date',
+            'tanggal_akhir_berlaku' => 'nullable|date|after_or_equal:tanggal_berlaku',
         ]);
 
         $violationType->update($request->all()); // DIPERBARUI
