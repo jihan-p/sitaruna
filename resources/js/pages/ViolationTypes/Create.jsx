@@ -4,6 +4,7 @@ import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import FormGroup from '@/components/molecules/FormGroup';
 import TextInput from '@/components/atoms/TextInput';
+import Textarea from '@/components/atoms/Textarea'; // Impor Textarea
 import PrimaryButton from '@/components/molecules/PrimaryButton';
 import CancelButton from '@/components/molecules/CancelButton';
 import Checkbox from '@/components/atoms/Checkbox';
@@ -78,16 +79,35 @@ export default function CreateViolationType({ auth }) {
               </FormGroup>
 
               <FormGroup label="Tanggal Mulai Berlaku" error={errors.tanggal_berlaku}>
-                <DatePicker selected={tanggalBerlaku} onChange={handleTanggalBerlakuChange} dateFormat="dd/MM/yyyy" className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300" placeholderText="DD/MM/YYYY" isClearable />
+                <DatePicker
+                    selected={tanggalBerlaku}
+                    onChange={handleTanggalBerlakuChange}
+                    dateFormat="dd/MM/yyyy"
+                    className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
+                    placeholderText="DD/MM/YYYY"
+                    isClearable
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={15} />
               </FormGroup>
 
               <FormGroup label="Tanggal Akhir Berlaku (Opsional)" error={errors.tanggal_akhir_berlaku}>
-                <DatePicker selected={tanggalAkhirBerlaku} onChange={handleTanggalAkhirBerlakuChange} dateFormat="dd/MM/yyyy" className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300" placeholderText="DD/MM/YYYY" isClearable minDate={tanggalBerlaku} />
+                <DatePicker
+                    selected={tanggalAkhirBerlaku}
+                    onChange={handleTanggalAkhirBerlakuChange}
+                    dateFormat="dd/MM/yyyy"
+                    className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
+                    placeholderText="DD/MM/YYYY"
+                    isClearable
+                    minDate={tanggalBerlaku}
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={15} />
               </FormGroup>
             </div>
 
             <FormGroup label="Deskripsi Pelanggaran" error={errors.deskripsi} className="mt-4">
-              <TextInput
+              <Textarea
                 id="deskripsi"
                 name="deskripsi"
                 value={data.deskripsi}

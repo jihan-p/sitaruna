@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use App\Imports\ViolationTypesImport; // Asumsi Anda akan membuat kelas Import ini
 use Illuminate\Support\Facades\File; // Untuk memeriksa keberadaan file
+use Maatwebsite\Excel\Facades\Excel; // Import facade Excel yang benar
 use Illuminate\Routing\Controllers\Middleware;
 
 class ViolationTypeController extends Controller implements HasMiddleware // NAMA CLASS DIPERBARUI
@@ -110,20 +111,18 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
         ]);
 
         try {
-            // Logika untuk mengimpor file menggunakan Laravel Excel
-            // Excel::import(new ViolationTypesImport, $request->file('import_file'));
+            // Logika untuk mengimcpor file menggunakan Laravel Excel
+            Excel::import(new ViolationTypesImport, $request->file('import_file'));
             // Untuk sekarang, kita hanya akan menampilkan pesan sukses placeholder
             // Ganti komentar di atas dengan implementasi Excel::import Anda
 
             // Simulasi impor berhasil
             // Hapus ini jika Anda sudah mengimplementasikan Excel::import
             // $file = $request->file('import_file');
-            // Log::info("File '{$file->getClientOriginalName()}' akan diimpor.");
-
+            // \Illuminate\Support\Facades\Log::info("File '{$file->getClientOriginalName()}' akan diimpor.");
             return redirect()->route('violation-types.index')->with('success', 'Data Jenis Pelanggaran berhasil diimpor.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-             $failures = $e->failures();
-             // Anda bisa mengirim $failures ke view atau log, atau format sebagai pesan error
+            $failures = $e->failures();
              return back()->withErrors(['import_file' => 'Terjadi kesalahan validasi selama impor. Periksa kembali file Anda.'])->with('import_errors', $failures);
         } catch (\Exception $e) {
             // Tangani error umum lainnya
