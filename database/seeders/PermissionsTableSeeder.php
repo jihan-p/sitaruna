@@ -154,6 +154,7 @@ class PermissionsTableSeeder extends Seeder
             'violation-types edit',
             'violation-types delete',
             'violation-types show', // Konsistensi dengan resource lain, tambahkan show
+            'violation-types import',
         ];
         $allPermissions = array_merge($allPermissions, $violationTypePermissions);
         
