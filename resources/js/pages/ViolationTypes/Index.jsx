@@ -42,7 +42,7 @@ export default function ViolationTypeIndex({ auth }) {
           <div className="flex items-center gap-2">
             {hasAnyPermission(allPermissions, [`${resource} create`]) && (
               <AddButton url={route(`${resource}.create`)}>
-                Tambah
+                Tambah Jenis Pelanggaran
               </AddButton>
             )}
             {hasAnyPermission(allPermissions, [`${resource} import`]) && ( // Tambahkan permission check untuk import

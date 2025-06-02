@@ -23,7 +23,7 @@ import {
     IconCalendarStats,
     IconListDetails,
     IconSchool,
-    IconAlertTriangle, // Tambahkan ikon untuk Jenis Pelanggaran
+    IconAlertTriangle, IconShieldExclamation, // Tambahkan ikon untuk Jenis dan Pelanggaran Taruna
 } from '@tabler/icons-react';
 
 import hasAnyPermission from '@/utils/Permissions';
@@ -368,6 +368,18 @@ export default function AuthenticatedLayout({ user: authUser, header, children }
                             icon={IconAlertTriangle} // Menggunakan ikon IconAlertTriangle
                         >
                             Jenis Pelanggaran
+                        </NavLink>
+                     )}
+
+                     {user && hasAnyPermission(allPermissions, ['student-violations index']) && (
+                         <NavLink
+                            href={route('student-violations.index')}
+                            active={route().current('student-violations.index')}
+                            isSidebarExpanded={isNavExpanded}
+                            isMobile={isMobile}
+                            icon={IconShieldExclamation} // Menggunakan ikon IconShieldExclamation
+                        >
+                            Pelanggaran Taruna
                         </NavLink>
                      )}
 

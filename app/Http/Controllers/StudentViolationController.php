@@ -9,22 +9,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 
-class StudentViolationController extends Controller implements HasMiddleware // NAMA CLASS DIPERBARUI
+class StudentViolationController extends Controller
 {
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('permission:student-violations index', only: ['index']),
-            new Middleware('permission:student-violations create', only: ['create', 'store']),
-            new Middleware('permission:student-violations edit', only: ['edit', 'update']),
-            new Middleware('permission:student-violations delete', only: ['destroy']),
-            new Middleware('permission:student-violations show', only: ['show']),
-        ];
-    }
-
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -60,7 +48,7 @@ class StudentViolationController extends Controller implements HasMiddleware // 
             'student_id' => 'required|exists:students,id',
             'violation_type_id' => 'required|exists:violation_types,id', // DIPERBARUI
             'tanggal_pelanggaran' => 'required|date',
-            'jam_pelanggaran' => 'nullable|date_format:H:i',
+            'jam_pelanggaran' => 'nullable|date_format:H:i', // Validasi format 24 jam (HH:MM)
             'keterangan_kejadian' => 'nullable|string|max:255',
             'bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
@@ -78,23 +66,25 @@ class StudentViolationController extends Controller implements HasMiddleware // 
             $data['bukti_pelanggaran'] = $path;
         }
 
-        $studentViolation = StudentViolation::create($data); // DIPERBARUI
+        DB::transaction(function () use ($data, $violationType) {
+            $studentViolation = StudentViolation::create($data);
 
-        $student = Student::find($studentViolation->student_id); // DIPERBARUI
-        if ($student) {
-            $student->total_poin_pelanggaran += $violationType->poin; // DIPERBARUI
-            $student->save();
-        }
+            $student = Student::find($studentViolation->student_id);
+            if ($student) {
+                $student->total_poin_pelanggaran += $violationType->poin;
+                $student->save();
+            }
+        });
 
         return redirect()->route('student-violations.index') // DIPERBARUI NAMA RUTE
                          ->with('success', 'Pelanggaran Taruna berhasil ditambahkan.');
     }
 
-    public function show(StudentViolation $studentViolation) // DIPERBARUI
+    public function show(StudentViolation $studentViolation)
     {
-        $studentViolation->load(['student', 'violationType', 'educationStaff']); // DIPERBARUI
-        return Inertia::render('StudentViolations/Show', [ // DIPERBARUI PATH INERTIA (Plural)
-            'studentViolation' => $studentViolation, // DIPERBARUI
+        $studentViolation->load(['student', 'violationType', 'educationStaff']);
+        return Inertia::render('StudentViolations/Show', [
+            'studentViolation' => $studentViolation,
         ]);
     }
 
@@ -102,79 +92,92 @@ class StudentViolationController extends Controller implements HasMiddleware // 
     {
         $students = Student::select('id', 'nama_lengkap', 'nit')->orderBy('nama_lengkap')->get();
         $violationTypes = ViolationType::where('aktif', true)->select('id', 'deskripsi', 'poin', 'kategori')->orderBy('deskripsi')->get(); // DIPERBARUI
+        $studentViolation->load(['student', 'violationType']);
 
-        $studentViolation->load(['student', 'violationType']); // DIPERBARUI
+        // Format jam_pelanggaran for the time input field
+        // The database stores TIME as HH:MM:SS. The 'datetime' cast makes it a Carbon instance.
+        // We need to extract HH:MM for the <input type="time">.
+        $studentViolation->formatted_jam_pelanggaran = $studentViolation->jam_pelanggaran
+            ? \Carbon\Carbon::parse($studentViolation->jam_pelanggaran)->format('H:i')
+            : '';
 
-        return Inertia::render('StudentViolations/Edit', [ // DIPERBARUI PATH INERTIA (Plural)
-            'studentViolation' => $studentViolation, // DIPERBARUI
+
+        return Inertia::render('StudentViolations/Edit', [
+            'studentViolation' => $studentViolation,
             'students' => $students,
-            'violationTypes' => $violationTypes, // DIPERBARUI
+            'violationTypes' => $violationTypes,
         ]);
     }
 
-    public function update(Request $request, StudentViolation $studentViolation) // DIPERBARUI
+    public function update(Request $request, StudentViolation $studentViolation)
     {
         $request->validate([
             'student_id' => 'required|exists:students,id',
             'violation_type_id' => 'required|exists:violation_types,id', // DIPERBARUI
             'tanggal_pelanggaran' => 'required|date',
-            'jam_pelanggaran' => 'nullable|date_format:H:i',
+            'jam_pelanggaran' => 'nullable|date_format:H:i', // Validasi format 24 jam (HH:MM)
             'keterangan_kejadian' => 'nullable|string|max:255',
             'bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'remove_bukti_pelanggaran' => 'boolean',
         ]);
 
-        $oldViolationType = $studentViolation->violationType; // DIPERBARUI
-        $newViolationType = ViolationType::find($request->violation_type_id); // DIPERBARUI
+        DB::transaction(function () use ($request, $studentViolation) {
+            $oldViolationType = $studentViolation->violationType;
+            $newViolationType = ViolationType::find($request->violation_type_id);
 
-        if (!$newViolationType) {
-            return back()->withErrors(['violation_type_id' => 'Jenis Pelanggaran baru tidak ditemukan.']);
-        }
-
-        $data = $request->except(['bukti_pelanggaran', 'remove_bukti_pelanggaran']);
-
-        if ($request->hasFile('bukti_pelanggaran')) {
-            if ($studentViolation->bukti_pelanggaran) { // DIPERBARUI
-                Storage::disk('public')->delete($studentViolation->bukti_pelanggaran); // DIPERBARUI
+            if (!$newViolationType) {
+                // This will be caught by the transaction and rolled back.
+                // Consider throwing a more specific exception or handling it before the transaction.
+                return back()->withErrors(['violation_type_id' => 'Jenis Pelanggaran baru tidak ditemukan.'])->withInput(); // Added withInput() for better UX
             }
-            $path = $request->file('bukti_pelanggaran')->store('bukti_pelanggaran', 'public');
-            $data['bukti_pelanggaran'] = $path;
-        } elseif ($request->boolean('remove_bukti_pelanggaran')) {
-            if ($studentViolation->bukti_pelanggaran) { // DIPERBARUI
-                Storage::disk('public')->delete($studentViolation->bukti_pelanggaran); // DIPERBARUI
+
+            $data = $request->except(['bukti_pelanggaran', 'remove_bukti_pelanggaran']);
+
+            if ($request->hasFile('bukti_pelanggaran')) {
+                if ($studentViolation->bukti_pelanggaran) {
+                    Storage::disk('public')->delete($studentViolation->bukti_pelanggaran);
+                }
+                $path = $request->file('bukti_pelanggaran')->store('bukti_pelanggaran', 'public');
+                $data['bukti_pelanggaran'] = $path;
+            } elseif ($request->boolean('remove_bukti_pelanggaran')) {
+                if ($studentViolation->bukti_pelanggaran) {
+                    Storage::disk('public')->delete($studentViolation->bukti_pelanggaran);
+                }
+                $data['bukti_pelanggaran'] = null;
             }
-            $data['bukti_pelanggaran'] = null;
-        } else {
-             $data['bukti_pelanggaran'] = $studentViolation->bukti_pelanggaran; // DIPERBARUI
-        }
+            // No 'else' needed here: if neither of the above, $data won't have 'bukti_pelanggaran',
+            // so the existing value in DB remains untouched by $studentViolation->update($data).
 
-        $studentViolation->update($data); // DIPERBARUI
+            $studentViolation->update($data);
 
-        $student = Student::find($studentViolation->student_id); // DIPERBARUI
-        if ($student) {
-            $student->total_poin_pelanggaran -= $oldViolationType->poin; // DIPERBARUI
-            $student->total_poin_pelanggaran += $newViolationType->poin; // DIPERBARUI
-            $student->save();
-        }
+            $student = Student::find($studentViolation->student_id);
+            if ($student) {
+                $student->total_poin_pelanggaran -= $oldViolationType->poin;
+                $student->total_poin_pelanggaran += $newViolationType->poin;
+                $student->save();
+            }
+        });
 
         return redirect()->route('student-violations.index') // DIPERBARUI NAMA RUTE
                          ->with('success', 'Pelanggaran Taruna berhasil diperbarui.');
     }
 
-    public function destroy(StudentViolation $studentViolation) // DIPERBARUI
+    public function destroy(StudentViolation $studentViolation)
     {
-        $violationType = $studentViolation->violationType; // DIPERBARUI
-        $student = $studentViolation->student; // DIPERBARUI
-        if ($student && $violationType) {
-            $student->total_poin_pelanggaran -= $violationType->poin; // DIPERBARUI
-            $student->save();
-        }
+        DB::transaction(function () use ($studentViolation) {
+            $violationType = $studentViolation->violationType;
+            $student = $studentViolation->student;
+            if ($student && $violationType) {
+                $student->total_poin_pelanggaran -= $violationType->poin;
+                $student->save();
+            }
 
-        if ($studentViolation->bukti_pelanggaran) { // DIPERBARUI
-            Storage::disk('public')->delete($studentViolation->bukti_pelanggaran); // DIPERBARUI
-        }
+            if ($studentViolation->bukti_pelanggaran) {
+                Storage::disk('public')->delete($studentViolation->bukti_pelanggaran);
+            }
 
-        $studentViolation->delete(); // DIPERBARUI
+            $studentViolation->delete();
+        });
 
         return back()->with('success', 'Pelanggaran Taruna berhasil dihapus.');
     }
