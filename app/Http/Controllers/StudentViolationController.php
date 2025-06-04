@@ -46,34 +46,49 @@ class StudentViolationController extends Controller
     {
         $request->validate([
             'student_id' => 'required|exists:students,id',
-            'violation_type_id' => 'required|exists:violation_types,id', // DIPERBARUI
             'tanggal_pelanggaran' => 'required|date',
             'jam_pelanggaran' => 'nullable|date_format:H:i', // Validasi format 24 jam (HH:MM)
-            'keterangan_kejadian' => 'nullable|string|max:255',
-            'bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'violations' => 'required|array|min:1',
+            'violations.*.violation_type_id' => 'required|exists:violation_types,id',
+            'violations.*.keterangan_kejadian' => 'nullable|string|max:1000', // Tingkatkan jika perlu
+            'violations.*.bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048', // Validasi untuk setiap file
         ]);
 
-        $violationType = ViolationType::find($request->violation_type_id); // DIPERBARUI
-        if (!$violationType) { // DIPERBARUI
-            return back()->withErrors(['violation_type_id' => 'Jenis Pelanggaran tidak ditemukan.']);
-        }
+        DB::transaction(function () use ($request) {
+            $student = Student::findOrFail($request->input('student_id'));
+            $totalPointsForSubmission = 0;
+            $educationStaffId = Auth::user()->educationStaff?->id; // Atau Auth::id() jika pelapor adalah user biasa
 
-        $data = $request->except('bukti_pelanggaran');
-        $data['education_staff_id'] = Auth::user()->educationStaff?->id;
+            foreach ($request->input('violations') as $index => $violationData) {
+                $currentViolationType = ViolationType::find($violationData['violation_type_id']);
+                if (!$currentViolationType) {
+                    // Seharusnya tidak terjadi karena validasi 'exists'
+                    // Namun, sebagai fallback, bisa throw exception atau handle error
+                    throw new \Exception("Jenis Pelanggaran dengan ID {$violationData['violation_type_id']} tidak ditemukan.");
+                }
 
-        if ($request->hasFile('bukti_pelanggaran')) {
-            $path = $request->file('bukti_pelanggaran')->store('bukti_pelanggaran', 'public');
-            $data['bukti_pelanggaran'] = $path;
-        }
+                $newViolationRecordData = [
+                    'student_id' => $student->id,
+                    'violation_type_id' => $currentViolationType->id,
+                    'tanggal_pelanggaran' => $request->input('tanggal_pelanggaran'),
+                    'jam_pelanggaran' => $request->input('jam_pelanggaran'),
+                    'keterangan_kejadian' => $violationData['keterangan_kejadian'] ?? null,
+                    'education_staff_id' => $educationStaffId,
+                    'bukti_pelanggaran' => null,
+                ];
 
-        DB::transaction(function () use ($data, $violationType) {
-            $studentViolation = StudentViolation::create($data);
+                if ($request->hasFile("violations.{$index}.bukti_pelanggaran")) {
+                    $file = $request->file("violations.{$index}.bukti_pelanggaran");
+                    $path = $file->store('bukti_pelanggaran', 'public');
+                    $newViolationRecordData['bukti_pelanggaran'] = $path;
+                }
 
-            $student = Student::find($studentViolation->student_id);
-            if ($student) {
-                $student->total_poin_pelanggaran += $violationType->poin;
-                $student->save();
+                StudentViolation::create($newViolationRecordData);
+                $totalPointsForSubmission += $currentViolationType->poin;
             }
+
+            $student->total_poin_pelanggaran += $totalPointsForSubmission;
+            $student->save();
         });
 
         return redirect()->route('student-violations.index') // DIPERBARUI NAMA RUTE
