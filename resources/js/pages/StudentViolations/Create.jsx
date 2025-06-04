@@ -29,6 +29,7 @@ export default function CreateStudentViolation({ auth }) {
   });
 
   const [tanggalPelanggaran, setTanggalPelanggaran] = useState(null);
+  const [jamPelanggaranState, setJamPelanggaranState] = useState(null);
 
   const studentOptions = students.map(student => ({ value: student.id, label: `${student.nit || 'N/A'} - ${student.nama_lengkap}` }));
   const violationTypeOptions = violationTypes.map(type => ({ value: type.id, label: `(${type.kategori}) ${type.deskripsi} - ${type.poin} poin` }));
@@ -36,6 +37,12 @@ export default function CreateStudentViolation({ auth }) {
   const handleTanggalPelanggaranChange = (date) => {
     setTanggalPelanggaran(date);
     setData('tanggal_pelanggaran', date ? date.toISOString().split('T')[0] : '');
+  };
+
+  const handleJamPelanggaranChange = (time) => {
+    setJamPelanggaranState(time);
+    // Format ke HH:mm untuk dikirim ke backend
+    setData('jam_pelanggaran', time ? `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}` : '');
   };
 
   const handleViolationChange = (index, field, value) => {
@@ -70,6 +77,7 @@ export default function CreateStudentViolation({ auth }) {
       onSuccess: () => {
         reset(); // Ini akan mereset form ke initial values
         setTanggalPelanggaran(null);
+        setJamPelanggaranState(null);
         // Pastikan violations juga direset ke satu entri jika reset() tidak menanganinya dengan benar
         // setData('violations', [{ ...initialViolationEntry, id: Date.now() }]); // Baris ini mungkin tidak diperlukan jika reset() bekerja sesuai harapan
       },
@@ -85,20 +93,24 @@ export default function CreateStudentViolation({ auth }) {
 
       <Container>
         <Card title="Form Tambah Pelanggaran Taruna">
-          <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
+            {/* Baris untuk Pilih Taruna */}
+            <div className="grid grid-cols-1 gap-4">
               <FormGroup label="Pilih Taruna" error={errors.student_id}>
                 <Select2
                   id="student_id"
                   options={studentOptions}
                   value={studentOptions.find(option => option.value === data.student_id)}
-                  onChange={option => setData('student_id', option ? option.value : '')}
+                  onChange={option => setData('student_id', option?.value || '')}
                   placeholder="Cari Taruna..."
                   isClearable
                 />
               </FormGroup>
+            </div>
 
-              <FormGroup label="Tanggal Pelanggaran" error={errors.tanggal_pelanggaran}>
+            {/* Baris untuk Tanggal dan Jam Pelanggaran */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <FormGroup label="Tanggal Pelanggaran" error={errors.tanggal_pelanggaran} className="md:col-span-3">
                 <DatePicker
                   selected={tanggalPelanggaran}
                   onChange={handleTanggalPelanggaranChange}
@@ -112,14 +124,21 @@ export default function CreateStudentViolation({ auth }) {
                 />
               </FormGroup>
 
-              <FormGroup label="Jam Pelanggaran (Opsional)" error={errors.jam_pelanggaran}>
-                <input
+              <FormGroup label="Jam Pelanggaran (Opsional)" error={errors.jam_pelanggaran} className="md:col-span-1">
+                <DatePicker
                   id="jam_pelanggaran"
-                  type="time"
-                  value={data.jam_pelanggaran}
-                  onChange={(e) => setData('jam_pelanggaran', e.target.value)}
+                  selected={jamPelanggaranState}
+                  onChange={handleJamPelanggaranChange}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  timeCaption="Jam"
+                  dateFormat="HH:mm" // Format tampilan
+                  timeFormat="HH:mm" // Format untuk picker
                   placeholder="JJ:MM"
                   className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
+                  wrapperClassName="w-full" // Tambahkan ini untuk memastikan wrapper mengambil lebar penuh
+                  isClearable
                 />
               </FormGroup>
             </div>

@@ -170,7 +170,9 @@ export default function Edit({ auth }) {
                             <CancelButton url={route(`${routeResourceName}.index`)}>
                                 Batal
                             </CancelButton>
-                            <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
+                            <PrimaryButton type="submit" disabled={processing}>
+                                {processing ? 'Memperbarui...' : 'Perbarui'}
+                            </PrimaryButton>
                         </div>
                     </form>
                 </Card>
