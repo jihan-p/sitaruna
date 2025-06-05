@@ -29,9 +29,8 @@ import {
 import hasAnyPermission from '@/utils/Permissions';
 
 
-export default function AuthenticatedLayout({ user: authUser, header, children }) {
+export default function AuthenticatedLayout({ header, children }) { // Hapus prop user (authUser)
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const { academicYears, activeAcademicYearId, activeSemesterId, auth } = usePage().props;
     const user = auth.user;
     const allPermissions = auth.permissions;
