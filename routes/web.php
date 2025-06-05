@@ -16,6 +16,20 @@ use App\Http\Controllers\AchievementTypeController;
 use App\Http\Controllers\StudentAchievementController;
 use App\Http\Controllers\ViolationTypeController;
 use App\Http\Controllers\StudentViolationController;
+
+// Model untuk Dashboard
+use App\Models\Student;
+use App\Models\EducationStaff;
+use App\Models\Major;
+use App\Models\ClassModel;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission as SpatiePermission; // Alias untuk menghindari konflik
+use App\Models\ViolationType;
+use App\Models\StudentViolation;
+use App\Models\AchievementType;
+use App\Models\StudentAchievement;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -30,8 +44,26 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/dashboard', function (Request $request) {
+    // Ambil periode akademik aktif dari session jika ada
+    // $activeAcademicYearId = $request->session()->get('active_academic_year_id');
+    // $activeSemesterId = $request->session()->get('active_semester_id');
+
+    $stats = [
+        'totalStudents' => Student::count(),
+        'totalEducationStaff' => EducationStaff::count(),
+        'totalMajors' => Major::count(),
+        'totalClasses' => ClassModel::count(),
+        'totalUsers' => User::count(),
+        'totalRoles' => Role::count(),
+        // 'totalPermissions' => SpatiePermission::count(), // Jika diperlukan
+        'totalViolationTypes' => ViolationType::count(),
+        'totalStudentViolations' => StudentViolation::count(), // Bisa difilter by periode aktif
+        'totalAchievementTypes' => AchievementType::count(),
+        'totalStudentAchievements' => StudentAchievement::count(), // Bisa difilter by periode aktif
+    ];
+
+    return Inertia::render('Dashboard', ['stats' => $stats]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -46,7 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class)->except('show');
 
     // users route
-Route::resource('/users', UserController::class)->except('show');
+        Route::resource('/users', UserController::class)->except('show');
 
     // students route
     Route::resource('/students', StudentController::class);
@@ -58,15 +90,15 @@ Route::resource('/users', UserController::class)->except('show');
     Route::resource('academic-years', AcademicYearController::class);
 
     // semesters route
-Route::resource('semesters', SemesterController::class)->except('show');
+    Route::resource('semesters', SemesterController::class)->except('show');
 
     // class route
-Route::resource('classes', ClassController::class)->except('show');
+    Route::resource('classes', ClassController::class)->except('show');
 
     // enrollments route
     Route::resource('enrollments', EnrollmentController::class);
 
-Route::resource('education-staff', EducationStaffController::class);
+    Route::resource('education-staff', EducationStaffController::class);
 
     // Rute untuk Jenis Prestasi
     Route::resource('achievement-types', AchievementTypeController::class);
