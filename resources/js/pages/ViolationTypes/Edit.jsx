@@ -127,7 +127,9 @@ export default function EditViolationType({ auth }) {
 
             <div className="flex items-center justify-end gap-2 mt-6">
               <CancelButton url={route(`${resource}.index`)}>Batal</CancelButton>
-              <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
+              <PrimaryButton type="submit" disabled={processing}>
+                {processing ? 'Memperbarui...' : 'Perbarui'}
+              </PrimaryButton>
             </div>
           </form>
         </Card>

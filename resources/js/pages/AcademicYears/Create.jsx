@@ -82,7 +82,9 @@ export default function Create({ auth }) {
 
             <div className="flex items-center gap-2 mt-4 justify-end">
               <CancelButton url={route(`${routeResourceName}.index`)}>Batal</CancelButton>
-              <PrimaryButton type="submit" disabled={processing}>Simpan</PrimaryButton>
+              <PrimaryButton type="submit" disabled={processing}>
+                {processing ? 'Menyimpan...' : 'Simpan'}
+              </PrimaryButton>
             </div>
           </form>
         </Card>

@@ -154,7 +154,9 @@ export default function Create({ auth, roles }) { // Tambahkan roles sebagai pro
 
         <div className="flex items-center justify-end gap-2 mt-4">
           <CancelButton url={route(`${resource}.index`)}>Batal</CancelButton>
-          <PrimaryButton type="submit" disabled={processing}>Simpan</PrimaryButton>
+          <PrimaryButton type="submit" disabled={processing}>
+            {processing ? 'Menyimpan...' : 'Simpan'}
+          </PrimaryButton>
             </div>
           </form>
         </Card>

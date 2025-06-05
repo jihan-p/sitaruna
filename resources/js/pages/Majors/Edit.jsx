@@ -71,7 +71,9 @@ export default function Edit({ auth, major }) {
 
         <div className="flex items-center justify-end gap-2 mt-4">
           <CancelButton url={route(`${routeResourceName}.index`)}>Kembali</CancelButton>
-          <PrimaryButton type="submit" disabled={processing}>Perbarui</PrimaryButton>
+          <PrimaryButton type="submit" disabled={processing}>
+            {processing ? 'Memperbarui...' : 'Perbarui'}
+          </PrimaryButton>
             </div>
           </form>
         </Card>

@@ -92,7 +92,7 @@ export default function Edit({ auth, class: classData, majors }) {
                                 Batal
                             </CancelButton>
                             <PrimaryButton type="submit" disabled={processing}>
-                                Perbarui
+                                {processing ? 'Memperbarui...' : 'Perbarui'}
                             </PrimaryButton>
                         </div>
                     </form>

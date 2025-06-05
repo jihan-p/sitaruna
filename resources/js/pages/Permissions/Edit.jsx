@@ -78,7 +78,9 @@ export default function Edit({auth}) {
 
                     <div className='flex items-center justify-end gap-2'>
                         <CancelButton url={route('permissions.index')}> Go Back </CancelButton> {/* Atau "Kembali" */}
-                        <PrimaryButton type={'submit'} disabled={processing}> Perbarui </PrimaryButton>
+                        <PrimaryButton type="submit" disabled={processing}>
+                            {processing ? 'Memperbarui...' : 'Perbarui'}
+                        </PrimaryButton>
                         </div>
                     </form>
                 </Card>

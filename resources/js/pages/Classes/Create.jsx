@@ -79,7 +79,7 @@ export default function Create({ auth, majors }) {
                                 Batal
                             </CancelButton>
                             <PrimaryButton type="submit" disabled={processing}>
-                                Simpan
+                                {processing ? 'Menyimpan...' : 'Simpan'}
                             </PrimaryButton>
                         </div>
                     </form>
