@@ -136,6 +136,7 @@ class PermissionsTableSeeder extends Seeder
             'achievement-types edit',
             'achievement-types delete',
             'achievement-types show', // Konsistensi dengan resource lain, tambahkan show
+            'achievement-types import',
         ];
         $allPermissions = array_merge($allPermissions, $achievementTypePermissions);
         

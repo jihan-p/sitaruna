@@ -6,6 +6,7 @@ import Table from '@/components/organisms/Table';
 import Pagination from '@/components/molecules/Pagination';
 import Search from '@/components/molecules/Search';
 import AddButton from '@/components/molecules/AddButton';
+import ImportButton from '@/components/molecules/ImportButton'; // Impor ImportButton
 import EditButton from '@/components/molecules/EditButton';
 import DeleteButton from '@/components/molecules/DeleteButton';
 import { Head, usePage } from '@inertiajs/react';
@@ -44,7 +45,9 @@ export default function AchievementTypeIndex({ auth }) {
                 Tambah Jenis Prestasi
               </AddButton>
             )}
-            {/* Jika ada fitur import untuk AchievementTypes, tombol bisa ditambahkan di sini */}
+            {hasAnyPermission(allPermissions, [`${resource} import`]) && (
+              <ImportButton url={route(`${resource}.import.form`)}>Impor</ImportButton>
+            )}
           </div>
           <div className="w-full md:w-4/6">
             <Search

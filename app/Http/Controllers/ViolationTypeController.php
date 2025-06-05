@@ -135,7 +135,7 @@ class ViolationTypeController extends Controller implements HasMiddleware // NAM
      */
     public function downloadImportExample()
     {
-        $filePath = public_path('examples/contoh_import_jenis_pelanggaran.xlsx');
+        $filePath = public_path('examples/contoh_impor_jenis_pelanggaran.xlsx');
 
         if (!File::exists($filePath)) {
             // Jika file tidak ditemukan, kembalikan error 404 atau pesan yang sesuai

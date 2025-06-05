@@ -101,7 +101,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('education-staff', EducationStaffController::class);
 
     // Rute untuk Jenis Prestasi
-    Route::resource('achievement-types', AchievementTypeController::class);
+    Route::resource('achievement-types', AchievementTypeController::class)->except(['show']);
+
+    // Rute untuk Impor Jenis Prestasi
+    Route::get('achievement-types/import', [AchievementTypeController::class, 'showImportForm'])->name('achievement-types.import.form');
+    Route::post('achievement-types/import', [AchievementTypeController::class, 'processImport'])->name('achievement-types.import.process');
+    Route::get('achievement-types/import/example', [AchievementTypeController::class, 'downloadImportExample'])->name('achievement-types.import.example');
 
     // Rute untuk Prestasi Taruna
     Route::resource('student-achievements', StudentAchievementController::class);
