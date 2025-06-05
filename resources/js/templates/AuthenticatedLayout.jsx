@@ -3,6 +3,7 @@ import ApplicationLogo from '@/components/atoms/ApplicationLogo';
 import Dropdown from '@/components/molecules/Dropdown';
 import NavLink from '@/components/atoms/NavLink';
 import ResponsiveNavLink from '@/components/atoms/ResponsiveNavLink';
+import NavDropdown from '@/components/molecules/navigation/NavDropdown'; // Import NavDropdown
 import AcademicPeriodSelector from '@/components/molecules/AcademicPeriodSelector';
 
 import { Link, usePage } from '@inertiajs/react';
@@ -23,7 +24,14 @@ import {
     IconCalendarStats,
     IconListDetails,
     IconSchool,
-    IconAlertTriangle, IconShieldExclamation, // Tambahkan ikon untuk Jenis dan Pelanggaran Taruna
+    IconAlertTriangle,
+    IconShieldExclamation,
+    IconAward, // Tambahkan IconAward di sini
+    IconBook, // Untuk Referensi & Master Data
+    IconUsersPlus, // Untuk Akademik & Kesiswaan
+    IconShieldCheck, // Untuk Ketarunaan
+    IconTrophy,
+    IconUserShield,
 } from '@tabler/icons-react';
 
 import hasAnyPermission from '@/utils/Permissions';
@@ -256,132 +264,127 @@ export default function AuthenticatedLayout({ header, children }) { // Hapus pro
                         Dashboard
                     </NavLink>
 
-                    {user && hasAnyPermission(allPermissions, ['roles index']) && ( // Example of existing correct permission check
-                         <NavLink
-                            href={route('roles.index')}
-                            active={route().current('roles.index')}
+                    {/* Dropdown: Referensi & Master Data */}
+                    {(hasAnyPermission(allPermissions, ['academic-years index', 'semesters index', 'majors index', 'classes index', 'violation-types index', 'achievement-types index'])) && (
+                        <NavDropdown
+                            title="Referensi & Master"
+                            icon={IconBook}
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
-                            icon={IconUsers}
+                            activeRoutePatterns={['academic-years.*', 'semesters.*', 'majors.*', 'classes.*', 'violation-types.*', 'achievement-types.*']}
                         >
-                            Roles
-                        </NavLink>
-                    )}
-                     {user && hasAnyPermission(allPermissions, ['permissions index']) && (
-                         <NavLink
-                            href={route('permissions.index')}
-                            active={route().current('permissions.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconShield}
-                         >
-                            Permissions
-                         </NavLink>
-                     )}
-                     {user && hasAnyPermission(allPermissions, ['users index']) && (
-                         <NavLink
-                            href={route('users.index')}
-                            active={route().current('users.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconList}
-                         >
-                            Users
-                         </NavLink>
-                     )}
-
-                    {user && hasAnyPermission(allPermissions, ['education-staff index']) && (
-                        <NavLink
-                            href={route('education-staff.index')}
-                            active={route().current('education-staff.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconUsersGroup}
-                        >
-                            PTK
-                        </NavLink>
+                            {user && hasAnyPermission(allPermissions, ['academic-years index']) && (
+                                <NavLink href={route('academic-years.index')} active={route().current('academic-years.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendar}>Tahun Ajaran</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['semesters index']) && (
+                                <NavLink href={route('semesters.index')} active={route().current('semesters.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendarStats}>Semester</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['majors index']) && (
+                                <NavLink href={route('majors.index')} active={route().current('majors.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconBuildingSkyscraper}>Jurusan</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['classes index']) && (
+                                <NavLink href={route('classes.index')} active={route().current('classes.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconListDetails}>Kelas</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['violation-types index']) && (
+                                <NavLink href={route('violation-types.index')} active={route().current('violation-types.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconAlertTriangle}>Jenis Pelanggaran</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['achievement-types index']) && (
+                                <NavLink href={route('achievement-types.index')} active={route().current('achievement-types.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconAward}>Jenis Prestasi</NavLink>
+                            )}
+                        </NavDropdown>
                     )}
 
-                     {user && hasAnyPermission(allPermissions, ['students index']) && (
-                         <NavLink
-                            href={route('students.index')}
-                            active={route().current('students.index')}
+                    {/* Dropdown: Akademik & Kesiswaan */}
+                    {(hasAnyPermission(allPermissions, ['enrollments index', 'students index'])) && (
+                        <NavDropdown
+                            title="Akademik & Kesiswaan"
+                            icon={IconUsersPlus}
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
-                            icon={IconUsersGroup}
+                            activeRoutePatterns={['enrollments.*', 'students.*']}
                         >
-                            Peserta Didik
-                        </NavLink>
-                     )}
+                            {user && hasAnyPermission(allPermissions, ['enrollments index']) && (
+                                <NavLink href={route('enrollments.index')} active={route().current('enrollments.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconSchool}>Pendaftaran</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['students index']) && (
+                                <NavLink href={route('students.index')} active={route().current('students.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconUsersGroup}>Data Taruna</NavLink>
+                            )}
+                        </NavDropdown>
+                    )}
 
-                     {user && hasAnyPermission(allPermissions, ['majors index']) && (
-                         <NavLink
-                            href={route('majors.index')}
-                            active={route().current('majors.index')}
+                    {/* Dropdown: Ketarunaan */}
+                    {(hasAnyPermission(allPermissions, ['student-violations index', 'student-achievements index'])) && (
+                        <NavDropdown
+                            title="Ketarunaan"
+                            icon={IconShieldCheck}
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
-                            icon={IconBuildingSkyscraper}
+                            activeRoutePatterns={['student-violations.*', 'student-achievements.*']}
                         >
-                            Jurusan
-                        </NavLink>
-                     )}
+                            {user && hasAnyPermission(allPermissions, ['student-violations index']) && (
+                                <NavLink href={route('student-violations.index')} active={route().current('student-violations.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconShieldExclamation}>Pelanggaran Taruna</NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['student-achievements index']) && (
+                                <NavLink href={route('student-achievements.index')} active={route().current('student-achievements.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconTrophy}>Prestasi Taruna</NavLink>
+                            )}
+                        </NavDropdown>
+                    )}
 
-                    {user && hasAnyPermission(allPermissions, ['academic-years index']) && (
-                         <NavLink href={route('academic-years.index')} active={route().current('academic-years.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendar}>Tahun Ajaran</NavLink>
-                     )}
-
-                    {user && hasAnyPermission(allPermissions, ['semesters index']) && (
-                         <NavLink href={route('semesters.index')} active={route().current('semesters.index')} isSidebarExpanded={isNavExpanded} isMobile={isMobile} icon={IconCalendarStats}>Semester</NavLink>
-                     )}
-
-                     {user && hasAnyPermission(allPermissions, ['classes index']) && (
-                         <NavLink
-                            href={route('classes.index')}
-                            active={route().current('classes.index')}
+                    {/* Dropdown: Manajemen Staf & Pengguna */}
+                    {(hasAnyPermission(allPermissions, ['education-staff index', 'users index', 'roles index', 'permissions index'])) && (
+                        <NavDropdown
+                            title="Staf & Pengguna"
+                            icon={IconUsers} // Menggunakan IconUsers yang sudah ada
                             isSidebarExpanded={isNavExpanded}
                             isMobile={isMobile}
-                            icon={IconListDetails}
-                         >
-                            Kelas
-                         </NavLink>
-                     )}
-
-                     {user && hasAnyPermission(allPermissions, ['enrollments index']) && (
-                         <NavLink
-                            href={route('enrollments.index')}
-                            active={route().current('enrollments.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconSchool}
-                         >
-                            Pendaftaran
-                         </NavLink>
-                     )}
-
-                     {user && hasAnyPermission(allPermissions, ['violation-types index']) && (
-                         <NavLink
-                            href={route('violation-types.index')}
-                            active={route().current('violation-types.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconAlertTriangle} // Menggunakan ikon IconAlertTriangle
+                            activeRoutePatterns={['education-staff.*', 'users.*', 'roles.*', 'permissions.*']}
                         >
-                            Jenis Pelanggaran
-                        </NavLink>
-                     )}
-
-                     {user && hasAnyPermission(allPermissions, ['student-violations index']) && (
-                         <NavLink
-                            href={route('student-violations.index')}
-                            active={route().current('student-violations.index')}
-                            isSidebarExpanded={isNavExpanded}
-                            isMobile={isMobile}
-                            icon={IconShieldExclamation} // Menggunakan ikon IconShieldExclamation
-                        >
-                            Pelanggaran Taruna
-                        </NavLink>
-                     )}
-
+                            {user && hasAnyPermission(allPermissions, ['education-staff index']) && (
+                                <NavLink
+                                    href={route('education-staff.index')}
+                                    active={route().current('education-staff.index')}
+                                    isSidebarExpanded={isNavExpanded}
+                                    isMobile={isMobile}
+                                    icon={IconUsersGroup} // Ikon yang sudah ada
+                                >
+                                    PTK
+                                </NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['users index']) && (
+                                <NavLink
+                                    href={route('users.index')}
+                                    active={route().current('users.index')}
+                                    isSidebarExpanded={isNavExpanded}
+                                    isMobile={isMobile}
+                                    icon={IconList} // Ikon yang sudah ada
+                                >
+                                    Pengguna
+                                </NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['roles index']) && (
+                                <NavLink
+                                    href={route('roles.index')}
+                                    active={route().current('roles.index')}
+                                    isSidebarExpanded={isNavExpanded}
+                                    isMobile={isMobile}
+                                    icon={IconUserShield} // Ikon yang sudah ada
+                                >
+                                    Peran
+                                </NavLink>
+                            )}
+                            {user && hasAnyPermission(allPermissions, ['permissions index']) && (
+                                <NavLink
+                                    href={route('permissions.index')}
+                                    active={route().current('permissions.index')}
+                                    isSidebarExpanded={isNavExpanded}
+                                    isMobile={isMobile}
+                                    icon={IconShield} // Ikon yang sudah ada
+                                >
+                                    Hak Akses
+                                </NavLink>
+                            )}
+                        </NavDropdown>
+                    )}
 
                 </nav>
 
