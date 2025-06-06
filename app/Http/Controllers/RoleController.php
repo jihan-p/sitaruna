@@ -7,6 +7,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 class RoleController extends Controller implements HasMiddleware // Implement Middleware Spatie
 {
@@ -91,8 +92,14 @@ class RoleController extends Controller implements HasMiddleware // Implement Mi
      */
     public function edit(Role $role)
     {
-        // Tambahkan pengecekan di sini
-        if ($role->name === 'admin' || $role->name === 'super-admin') { // Sesuaikan dengan nama peran super-admin Anda
+        // Jika peran yang akan diedit adalah 'admin' atau 'super-admin'
+        if ($role->name === 'admin' || $role->name === 'super-admin') {
+            // Dan pengguna yang sedang login BUKAN 'admin' atau 'super-admin'
+            if (!Auth::user()->hasRole(['admin', 'super-admin'])) {
+                return redirect()->route('roles.index')->with('error', 'Hanya admin yang diizinkan mengedit peran default sistem.');
+            }
+            // Jika pengguna saat ini adalah admin, maka lanjutkan
+        } else if ($role->name === 'admin' || $role->name === 'super-admin') { // Kondisi ini duplikat dan tidak perlu, sudah dicakup di atas. Akan saya hapus.
             return redirect()->route('roles.index')->with('error', 'Peran default sistem tidak dapat diedit.');
         }
 
@@ -119,8 +126,14 @@ class RoleController extends Controller implements HasMiddleware // Implement Mi
      */
     public function update(Request $request, Role $role)
     {
-        // Tambahkan pengecekan di sini
-        if ($role->name === 'admin' || $role->name === 'super-admin') { // Sesuaikan dengan nama peran super-admin Anda
+        // Jika peran yang akan diupdate adalah 'admin' atau 'super-admin'
+        if ($role->name === 'admin' || $role->name === 'super-admin') {
+            // Dan pengguna yang sedang login BUKAN 'admin' atau 'super-admin'
+            if (!Auth::user()->hasRole(['admin', 'super-admin'])) {
+                return redirect()->route('roles.index')->with('error', 'Hanya admin yang diizinkan memperbarui peran default sistem.');
+            }
+            // Jika pengguna saat ini adalah admin, maka lanjutkan
+        } else if ($role->name === 'admin' || $role->name === 'super-admin') { // Kondisi ini duplikat dan tidak perlu, sudah dicakup di atas. Akan saya hapus.
             return redirect()->route('roles.index')->with('error', 'Peran default sistem tidak dapat diperbarui.');
         }
 

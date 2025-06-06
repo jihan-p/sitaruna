@@ -51,6 +51,12 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // === TAMBAHKAN PENGECEKAN INI ===
+        if ($user->hasRole('admin') || $user->hasRole('super-admin')) { // Sesuaikan nama peran jika perlu
+            // Opsional: Tambahkan logika untuk memeriksa apakah ini admin terakhir
+            return Redirect::route('profile.edit')->with('error', 'Akun admin tidak dapat dihapus melalui halaman profil.');
+        }
+        // ================================
         Auth::logout();
 
         $user->delete();

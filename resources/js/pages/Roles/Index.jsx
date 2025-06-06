@@ -25,6 +25,9 @@ export default function Index({auth}) {
     // Definisikan resource untuk konsistensi
     const resource = 'roles';
 
+    // Cek apakah pengguna saat ini adalah admin atau super-admin
+    const currentUserIsAdmin = auth.user.roles.some(r => r.name === 'admin' || r.name === 'super-admin');
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -74,8 +77,12 @@ export default function Index({auth}) {
                                         </Table.Td>
                                         <Table.Td className='text-right'>
                                             <div className='flex items-center justify-end gap-2'>
-                                                {/* Teruskan allPermissions ke hasAnyPermission */}
-                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && role.name !== 'admin' && role.name !== 'super-admin' && (
+                                                {/* Tombol Edit:
+                                                    - Muncul jika pengguna punya permission 'roles edit' DAN
+                                                    - (Peran BUKAN 'admin'/'super-admin' ATAU
+                                                    -  Peran ADALAH 'admin'/'super-admin' DAN pengguna saat ini ADALAH admin)
+                                                */}
+                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && ( (role.name !== 'admin' && role.name !== 'super-admin') || ((role.name === 'admin' || role.name === 'super-admin') && currentUserIsAdmin) ) && (
                                                     <EditButton url={route(`${resource}.edit`, role.id)}/>
                                                 )}
                                                 {/* Teruskan allPermissions ke hasAnyPermission */}
