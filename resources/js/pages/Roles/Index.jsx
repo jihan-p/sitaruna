@@ -75,11 +75,11 @@ export default function Index({auth}) {
                                         <Table.Td className='text-right'>
                                             <div className='flex items-center justify-end gap-2'>
                                                 {/* Teruskan allPermissions ke hasAnyPermission */}
-                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
-                                                     <EditButton url={route(`${resource}.edit`, role.id)}/>
+                                                {hasAnyPermission(allPermissions, [`${resource} edit`]) && role.name !== 'admin' && role.name !== 'super-admin' && (
+                                                    <EditButton url={route(`${resource}.edit`, role.id)}/>
                                                 )}
                                                 {/* Teruskan allPermissions ke hasAnyPermission */}
-                                                 {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
+                                                 {hasAnyPermission(allPermissions, [`${resource} delete`]) && role.name !== 'admin' && role.name !== 'super-admin' && (
                                                      <DeleteButton url={route(`${resource}.destroy`, role.id)}/>
                                                  )}
                                             </div>

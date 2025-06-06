@@ -58,11 +58,11 @@ export default function Index({auth}) {
                                             <div className='flex items-center justify-end gap-2'>
                                                 {/* Pass allPermissions to hasAnyPermission */}
                                                 {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
-                                                    <EditButton url={route('users.edit', user.id)}/>
+                                                    !user.roles.some(role => role.name === 'admin' || role.name === 'super-admin') && <EditButton url={route('users.edit', user.id)}/>
                                                 )}
                                                 {/* Pass allPermissions to hasAnyPermission */}
                                                 {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
-                                                    <DeleteButton url={route('users.destroy', user.id)}/>
+                                                    !user.roles.some(role => role.name === 'admin' || role.name === 'super-admin') && <DeleteButton url={route('users.destroy', user.id)}/>
                                                 )}
                                             </div>
                                         </Table.Td>

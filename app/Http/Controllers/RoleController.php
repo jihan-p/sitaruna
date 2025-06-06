@@ -91,6 +91,11 @@ class RoleController extends Controller implements HasMiddleware // Implement Mi
      */
     public function edit(Role $role)
     {
+        // Tambahkan pengecekan di sini
+        if ($role->name === 'admin' || $role->name === 'super-admin') { // Sesuaikan dengan nama peran super-admin Anda
+            return redirect()->route('roles.index')->with('error', 'Peran default sistem tidak dapat diedit.');
+        }
+
         // get permissions
         $data = Permission::orderBy('name')->pluck('name', 'id');
         $collection = collect($data);
@@ -114,6 +119,11 @@ class RoleController extends Controller implements HasMiddleware // Implement Mi
      */
     public function update(Request $request, Role $role)
     {
+        // Tambahkan pengecekan di sini
+        if ($role->name === 'admin' || $role->name === 'super-admin') { // Sesuaikan dengan nama peran super-admin Anda
+            return redirect()->route('roles.index')->with('error', 'Peran default sistem tidak dapat diperbarui.');
+        }
+
         // validate request
         $request->validate([
             'name' => 'required|min:3|max:255|unique:roles,name,'.$role->id,
@@ -135,6 +145,11 @@ class RoleController extends Controller implements HasMiddleware // Implement Mi
      */
     public function destroy(Role $role)
     {
+        // Tambahkan pengecekan di sini
+        if ($role->name === 'admin' || $role->name === 'super-admin') { // Sesuaikan dengan nama peran super-admin Anda
+            return back()->with('error', 'Peran default sistem tidak dapat dihapus.');
+        }
+
         // delete role data
         $role->delete();
 

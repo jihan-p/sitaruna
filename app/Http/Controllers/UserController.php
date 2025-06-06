@@ -88,6 +88,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function edit(User $user)
     {
+        // Tambahkan pengecekan di sini
+        if ($user->hasRole('admin') || $user->hasRole('super-admin')) { // Sesuaikan dengan nama peran super-admin Anda
+            return redirect()->route('users.index')->with('error', 'Pengguna dengan peran default sistem tidak dapat diedit.');
+        }
+
         // get roles
         $roles = Role::where('name', '!=', 'super-admin')->get();
 
@@ -103,6 +108,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(Request $request, User $user)
     {
+        // Tambahkan pengecekan di sini
+        if ($user->hasRole('admin') || $user->hasRole('super-admin')) { // Sesuaikan dengan nama peran super-admin Anda
+            return redirect()->route('users.index')->with('error', 'Pengguna dengan peran default sistem tidak dapat diperbarui.');
+        }
+
         // Definisikan aturan validasi dasar
         $rules = [
             'name' => 'required|min:3|max:255',
@@ -143,6 +153,11 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(User $user)
     {
+        // Tambahkan pengecekan di sini
+        if ($user->hasRole('admin') || $user->hasRole('super-admin')) { // Sesuaikan dengan nama peran super-admin Anda
+            return back()->with('error', 'Pengguna dengan peran default sistem tidak dapat dihapus.');
+        }
+
         // delete user data
         $user->delete();
 
