@@ -18,6 +18,14 @@ export default function Index({auth}) {
 
     const resource = 'permissions';
 
+    // Daftar nama permission yang dilindungi (harus sama dengan yang di backend)
+    const PROTECTED_PERMISSIONS_FRONTEND = [
+        'permissions index', 'permissions create', 'permissions edit', 'permissions delete',
+        'roles index', 'roles create', 'roles edit', 'roles delete',
+        'users index', 'users create', 'users edit', 'users delete',
+        // Tambahkan nama permission lain yang ingin Anda lindungi di sini
+    ];
+
     const canPerformAnyAction = hasAnyPermission(allPermissions, [`${resource} edit`, `${resource} delete`]);
 
     return (
@@ -59,10 +67,10 @@ export default function Index({auth}) {
                                             <Table.Td className='text-right'>
                                                 <div className='flex items-center justify-end gap-2'>
                                                     {hasAnyPermission(allPermissions, [`${resource} edit`]) && (
-                                                        <EditButton url={route('permissions.edit', permission.id)}/>
+                                                        !PROTECTED_PERMISSIONS_FRONTEND.includes(permission.name) && <EditButton url={route('permissions.edit', permission.id)}/>
                                                     )}
                                                     {hasAnyPermission(allPermissions, [`${resource} delete`]) && (
-                                                        <DeleteButton url={route('permissions.destroy', permission.id)}/>
+                                                        !PROTECTED_PERMISSIONS_FRONTEND.includes(permission.name) && <DeleteButton url={route('permissions.destroy', permission.id)}/>
                                                     )}
                                                 </div>
                                             </Table.Td>

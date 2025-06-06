@@ -7,6 +7,14 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Models\Permission;
 
+// Daftar nama permission yang dilindungi
+const PROTECTED_PERMISSIONS = [
+    'permissions index', 'permissions create', 'permissions edit', 'permissions delete',
+    'roles index', 'roles create', 'roles edit', 'roles delete',
+    'users index', 'users create', 'users edit', 'users delete',
+    // Tambahkan nama permission lain yang ingin Anda lindungi di sini
+];
+
 class PermissionController extends Controller implements HasMiddleware
 {
     public static function middleware()
@@ -63,6 +71,11 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function edit(Permission $permission)
     {
+        // Tambahkan pengecekan di sini
+        if (in_array($permission->name, PROTECTED_PERMISSIONS)) {
+            return redirect()->route('permissions.index')->with('error', 'Hak akses default sistem tidak dapat diedit.');
+        }
+
         // render view
         return inertia('Permissions/Edit', ['permission' => $permission]);
     }
@@ -72,6 +85,11 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function update(Request $request, Permission $permission)
     {
+        // Tambahkan pengecekan di sini
+        if (in_array($permission->name, PROTECTED_PERMISSIONS)) {
+            return redirect()->route('permissions.index')->with('error', 'Hak akses default sistem tidak dapat diperbarui.');
+        }
+
         // validate request
         $request->validate(['name' => 'required|min:3|max:255|unique:permissions,name,'.$permission->id]);
 
@@ -87,6 +105,11 @@ class PermissionController extends Controller implements HasMiddleware
      */
     public function destroy(Permission $permission)
     {
+        // Tambahkan pengecekan di sini
+        if (in_array($permission->name, PROTECTED_PERMISSIONS)) {
+            return back()->with('error', 'Hak akses default sistem tidak dapat dihapus.');
+        }
+
         // delete permissions data
         $permission->delete();
 
