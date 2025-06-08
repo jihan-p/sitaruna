@@ -1,18 +1,3 @@
-@import url("./oneschool/css/bootstrap.min.css");
-@import url("./oneschool/css/jquery-ui.css");
-@import url("./oneschool/css/owl.carousel.min.css");
-@import url("./oneschool/css/owl.theme.default.min.css");
-@import url("./oneschool/css/jquery.fancybox.min.css");
-@import url("./oneschool/css/bootstrap-datepicker.css");
-@import url("./oneschool/css/aos.css");
-@import url("./oneschool/css/magnific-popup.css");
-@import url("./oneschool/css/mediaelementplayer.css");
-
-@import url("./oneschool/fonts/icomoon/style.css");
-@import url("./oneschool/fonts/flaticon/font/flaticon.css");
-
-@import url("./oneschool/css/style.css");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

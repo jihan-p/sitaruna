@@ -1,102 +1,118 @@
-// resources/js/pages/Landing/Welcome.jsx
-import React from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
-import PublicLayout from '@/templates/PublicLayout.jsx'; // New template
-import IntroSection from '@/components/organisms/sections/IntroSection.jsx'; // New organism
-import CoursesSection from '@/components/organisms/sections/CoursesSection.jsx'; // New organism
-import ProgramsSection from '@/components/organisms/sections/ProgramsSection.jsx'; // New organism
-import TeachersSection from '@/components/organisms/sections/TeachersSection.jsx'; // New organism
-import TestimonySection from '@/components/organisms/sections/TestimonySection.jsx'; // New organism
-import WhyChooseUsSection from '@/components/organisms/sections/WhyChooseUsSection.jsx'; // New organism
-import ContactSection from '@/components/organisms/sections/ContactSection.jsx'; // New organism
+import { Head, Link } from '@inertiajs/react';
+import ApplicationLogo from '@/components/atoms/ApplicationLogo'; // Impor logo aplikasi Anda
+import { IconBook, IconShieldCheck, IconUsersPlus, IconReportAnalytics, IconHeart } from '@tabler/icons-react'; // Impor ikon yang relevan
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
-    // Dummy Data (replace with actual data fetched from Laravel backend)
-    const coursesData = [
-        { id: 1, title: 'Study Law of Physics', price: '$20', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_1.jpg', link: 'course-single.html' },
-        { id: 2, title: 'Logo Design Course', price: '$99', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_2.jpg', link: 'course-single.html' },
-        { id: 3, title: 'JS Programming Language', price: '$99', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_3.jpg', link: 'course-single.html' },
-        { id: 4, title: 'Study Law of Physics', price: '$20', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_4.jpg', link: 'course-single.html' },
-        { id: 5, title: 'Logo Design Course', price: '$99', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_5.jpg', link: 'course-single.html' },
-        { id: 6, title: 'JS Programming Language', price: '$99', duration: '4 Lessons / 12 week', students: '2,193', comments: 2, image: '/oneschool/images/img_6.jpg', link: 'course-single.html' },
-    ];
-
-    const teachersData = [
-        { id: 1, name: 'Benjamin Stone', position: 'Physics Teacher', bio: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.', image: '/oneschool/images/person_1.jpg' },
-        { id: 2, name: 'Katleen Stone', position: 'Physics Teacher', bio: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.', image: '/oneschool/images/person_2.jpg' },
-        { id: 3, name: 'Sadie White', position: 'Physics Teacher', bio: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro eius suscipit delectus enim iusto tempora, adipisci at provident.', image: '/oneschool/images/person_3.jpg' },
-    ];
-
-    const testimonialData = {
-        name: 'Jerome Jensen',
-        quote: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum rem soluta sit eius necessitatibus voluptate excepturi beatae ad eveniet sapiente impedit quae modi quo provident odit molestias! Rem reprehenderit assumenda',
-        image: '/oneschool/images/person_4.jpg'
-    };
-
-    // Form Handling for Signup Form (in IntroSection)
-    const { data: signupFormData, setData: setSignupFormData, post: postSignupForm, errors: signupFormErrors, reset: resetSignupForm } = useForm({
-        email: '',
-        password: '',
-        password_confirmation: '',
-    });
-
-    const handleSignupFormChange = (e) => {
-        setSignupFormData(e.target.name, e.target.value);
-    };
-
-    const handleSignupSubmit = (e) => {
-        e.preventDefault();
-        console.log('Signup form submitted:', signupFormData);
-        // Replace with actual Inertia post request, e.g.:
-        // postSignupForm(route('register'), {
-        //     onSuccess: () => resetSignupForm('password', 'password_confirmation'),
-        // });
-        alert('Signup form submitted (dummy)! Check console.');
-    };
-
-    // Form Handling for Contact Form (in ContactSection)
-    const { data: contactFormData, setData: setContactFormData, post: postContactForm, errors: contactFormErrors, reset: resetContactForm } = useForm({
-        firstName: '',
-        lastName: '',
-        subject: '',
-        email: '',
-        message: '',
-    });
-
-    const handleContactFormChange = (e) => {
-        setContactFormData(e.target.name, e.target.value);
-    };
-
-    const handleContactSubmit = (e) => {
-        e.preventDefault();
-        console.log('Contact form submitted:', contactFormData);
-        // Replace with actual Inertia post request, e.g.:
-        // postContactForm(route('contact.submit'), {
-        //     onSuccess: () => resetContactForm(),
-        // });
-        alert('Contact form submitted (dummy)! Check console.');
-    };
-
     return (
-        <PublicLayout auth={auth}>
-            <IntroSection
-                auth={auth}
-                signupFormData={signupFormData}
-                handleSignupFormChange={handleSignupFormChange}
-                signupFormErrors={signupFormErrors}
-                handleSignupSubmit={handleSignupSubmit}
-            />
-            <CoursesSection courses={coursesData} />
-            <ProgramsSection />
-            <TeachersSection teachers={teachersData} />
-            <TestimonySection testimonial={testimonialData} />
-            <WhyChooseUsSection />
-            <ContactSection
-                contactFormData={contactFormData}
-                handleContactFormChange={handleContactFormChange}
-                contactFormErrors={contactFormErrors}
-                handleContactSubmit={handleContactSubmit}
-            />
-        </PublicLayout>
+        <>
+            <Head title="Selamat Datang di SITARUNA" />
+            <div className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                {/* Background Image - Opsional, bisa diganti atau dihapus */}
+                <div
+                    className="absolute inset-0 z-0 opacity-20 dark:opacity-10"
+                    style={{
+                        backgroundImage: `url('/images/bg-homepage-default.jpg')`, // Ganti dengan path gambar background Anda
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                ></div>
+
+                <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-blue-600 selection:text-white">
+                    <div className="relative w-full max-w-4xl px-6 py-10 lg:max-w-5xl lg:py-16">
+                        <header className="flex flex-col sm:flex-row items-center justify-between gap-6 py-8">
+                            <div className="flex items-center gap-4">
+                                <ApplicationLogo className="h-16 w-auto sm:h-20" />
+                                <div>
+                                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+                                        SITARUNA
+                                    </h1>
+                                    <p className="text-md text-gray-600 dark:text-gray-400">
+                                    Sistem Informasi Terpadu Akademik Ketarunaan
+                                    </p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                                        SMK Negeri 2 Subang
+                                    </p>
+                                </div>
+                            </div>
+                            <nav className="-mx-3 flex flex-1 justify-end">
+                                {auth.user ? (
+                                    <Link
+                                        href={route('dashboard')}
+                                        className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-transparent transition hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus-visible:ring-blue-400"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href={route('login')}
+                                            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-transparent transition hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus-visible:ring-blue-400"
+                                        >
+                                            Log in
+                                        </Link>
+                                        {/* Tombol Register bisa di-disable jika tidak diperlukan */}
+                                        {/* <Link
+                                            href={route('register')}
+                                            className="ml-4 rounded-md px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-transparent transition hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus-visible:ring-blue-400"
+                                        >
+                                            Register
+                                        </Link> */}
+                                    </>
+                                )}
+                            </nav>
+                        </header>
+
+                        <main className="mt-10">
+                            <div className="text-center mb-12">
+                                <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 sm:text-3xl">
+                                    Fitur Unggulan SITARUNA
+                                </h2>
+                                <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                                    SITARUNA dirancang untuk mempermudah pengelolaan data akademik dan ketarunaan secara terintegrasi, efisien, dan transparan.
+                                </p>
+                            </div>
+
+                            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+                                <FeatureCard
+                                    icon={<IconBook size={32} className="text-blue-500" />}
+                                    title="Manajemen Akademik & Kesiswaan"
+                                    description="Kelola data taruna, pendaftaran, kelas, dan informasi akademik lainnya dengan mudah."
+                                />
+                                <FeatureCard
+                                    icon={<IconShieldCheck size={32} className="text-green-500" />}
+                                    title="Monitoring Ketarunaan"
+                                    description="Catat dan pantau pelanggaran serta prestasi taruna secara real-time untuk pembinaan yang lebih baik."
+                                />
+                                <FeatureCard
+                                    icon={<IconUsersPlus size={32} className="text-purple-500" />}
+                                    title="Pengelolaan Staf & Pengguna"
+                                    description="Atur data Pendidik dan Tenaga Kependidikan (PTK) serta manajemen hak akses pengguna sistem."
+                                />
+                                <FeatureCard
+                                    icon={<IconReportAnalytics size={32} className="text-yellow-500" />}
+                                    title="Laporan & Analisis"
+                                    description="Hasilkan laporan komprehensif untuk mendukung pengambilan keputusan dan evaluasi."
+                                />
+                            </div>
+                        </main>
+
+                        <footer className="py-12 mt-10 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+                            Copyright &copy;{new Date().getFullYear()} All rights reserved | made with <IconHeart size={16} strokeWidth={1.5} className="inline-block align-text-bottom" /> by <a href="https://t.me/jhanplv" target="_blank" className="text-blue-600 hover:underline" >jipi</a> @RPL SMKN 2 Subang
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
+
+// Komponen kecil untuk Feature Card
+const FeatureCard = ({ icon, title, description }) => (
+    <div className="flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div className="flex-shrink-0 p-4 bg-gray-200 dark:bg-gray-700 rounded-full mb-4">
+            {icon}
+        </div>
+        <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{description}</p>
+    </div>
+);
