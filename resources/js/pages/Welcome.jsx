@@ -27,9 +27,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         SITARUNA
                                     </h1>
                                     <p className="text-md text-gray-600 dark:text-gray-400">
-                                    Sistem Informasi Terpadu Akademik Ketarunaan
+                                    Sistem Informasi Terpadu Akademik dan Ketarunaan
                                     </p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                                    <p className="text-2xl text-gray-500 dark:text-gray-300">
                                         SMK Negeri 2 Subang
                                     </p>
                                 </div>
