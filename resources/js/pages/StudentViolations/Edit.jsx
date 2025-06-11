@@ -3,7 +3,6 @@ import AuthenticatedLayout from '@/templates/AuthenticatedLayout';
 import Container from '@/components/atoms/Container';
 import Card from '@/components/organisms/Card';
 import FormGroup from '@/components/molecules/FormGroup';
-import TextInput from '@/components/atoms/TextInput';
 import Textarea from '@/components/atoms/Textarea';
 import PrimaryButton from '@/components/molecules/PrimaryButton';
 import CancelButton from '@/components/molecules/CancelButton';
@@ -28,12 +27,26 @@ export default function EditStudentViolation({ auth }) {
     _method: 'put',
   });
 
+  const parseTimeStringToDate = (timeString) => {
+    if (!timeString) return null;
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+  };
+
   const [tanggalPelanggaran, setTanggalPelanggaran] = useState(
     studentViolation.tanggal_pelanggaran ? new Date(studentViolation.tanggal_pelanggaran) : null
   );
+  const [jamPelanggaranState, setJamPelanggaranState] = useState(
+    parseTimeStringToDate(data.jam_pelanggaran)
+  );
 
   const studentOptions = students.map(student => ({ value: student.id, label: `${student.nit || 'N/A'} - ${student.nama_lengkap}` }));
-  const violationTypeOptions = violationTypes.map(type => ({ value: type.id, label: `(${type.kategori}) ${type.deskripsi} - ${type.poin} poin` }));
+  const violationTypeOptions = violationTypes.map(type => ({ value: type.id, label: `(${type.kategori || 'N/A'}) ${type.deskripsi} - ${type.poin} poin` }));
 
   const handleTanggalPelanggaranChange = (date) => {
     setTanggalPelanggaran(date);
@@ -44,9 +57,12 @@ export default function EditStudentViolation({ auth }) {
     e.preventDefault();
     post(route(`${resource}.update`, studentViolation.id), {
       forceFormData: true,
-      // onSuccess: () => { // Ditangani oleh controller
-      // },
     });
+  };
+
+  const handleJamPelanggaranChange = (time) => {
+    setJamPelanggaranState(time);
+    setData('jam_pelanggaran', time ? `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}` : '');
   };
 
   return (
@@ -97,13 +113,20 @@ export default function EditStudentViolation({ auth }) {
               </FormGroup>
 
               <FormGroup label="Jam Pelanggaran (Opsional)" error={errors.jam_pelanggaran}>
-                <TextInput
+                <DatePicker
                   id="jam_pelanggaran"
-                  type="time"
-                  value={data.jam_pelanggaran}
-                  onChange={(e) => setData('jam_pelanggaran', e.target.value)}
+                  selected={jamPelanggaranState}
+                  onChange={handleJamPelanggaranChange}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  timeCaption="Jam"
+                  dateFormat="HH:mm" // Format tampilan
+                  timeFormat="HH:mm" // Format untuk picker
                   placeholder="JJ:MM"
-                  className="w-full"
+                  className="w-1/2 px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
+                  wrapperClassName="w-full"
+                  isClearable
                 />
               </FormGroup>
             </div>

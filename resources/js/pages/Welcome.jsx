@@ -64,9 +64,6 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                         <main className="mt-10">
                             <div className="text-center mb-12">
-                                <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 sm:text-3xl">
-                                    Fitur Unggulan SITARUNA
-                                </h2>
                                 <p className="mt-3 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                                     SITARUNA dirancang untuk mempermudah pengelolaan data akademik dan ketarunaan secara terintegrasi, efisien, dan transparan.
                                 </p>
@@ -75,7 +72,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
                                 <FeatureCard
                                     icon={<IconBook size={32} className="text-blue-500" />}
-                                    title="Manajemen Akademik & Kesiswaan"
+                                    title="Manajemen Akademik"
                                     description="Kelola data taruna, pendaftaran, kelas, dan informasi akademik lainnya dengan mudah."
                                 />
                                 <FeatureCard

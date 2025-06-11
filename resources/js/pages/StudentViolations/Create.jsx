@@ -136,7 +136,7 @@ export default function CreateStudentViolation({ auth }) {
                   dateFormat="HH:mm" // Format tampilan
                   timeFormat="HH:mm" // Format untuk picker
                   placeholder="JJ:MM"
-                  className="w-full px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
+                  className="w-1/2 px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
                   wrapperClassName="w-full" // Tambahkan ini untuk memastikan wrapper mengambil lebar penuh
                   isClearable
                 />
