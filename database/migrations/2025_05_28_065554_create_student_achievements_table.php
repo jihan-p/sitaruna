@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('student_achievements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade'); // Link ke tabel students
-            $table->foreignId('achievement_type_id')->constrained('achievement_types')->onDelete('cascade'); // Mengacu ke tabel achievement_types
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->foreignId('achievement_type_id')->constrained('achievement_types')->onDelete('restrict'); // Mencegah penghapusan jenis prestasi yang sedang digunakan
             $table->date('tanggal_prestasi');
             $table->text('keterangan_tambahan')->nullable(); // Detail prestasi (misalnya: "Juara 1 Lomba Pidato")
             $table->string('bukti_prestasi')->nullable(); // Path/URL file bukti (sertifikat, foto, dll.)
