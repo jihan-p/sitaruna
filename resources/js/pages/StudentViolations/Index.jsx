@@ -28,7 +28,7 @@ export default function StudentViolationIndex({ auth }) {
   const formatTime = (timeString) => {
     if (!timeString) return '-';
     // Asumsi timeString adalah 'HH:MM:SS' atau bagian dari datetime string
-    const date = new Date(`1970-01-01T${timeString}`);
+    const date = new Date(timeString);
     return date.toLocaleTimeString('id-ID', {
       hour: '2-digit', minute: '2-digit',
     });

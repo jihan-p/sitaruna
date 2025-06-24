@@ -16,11 +16,18 @@ export default function EditStudentViolation({ auth }) {
   const { studentViolation, students, violationTypes } = usePage().props;
   const resource = 'student-violations';
 
+  const getInitialTime = (datetimeString) => {
+    if (!datetimeString) return '';
+    const date = new Date(datetimeString);
+    if (isNaN(date.getTime())) return ''; // Menangani string tanggal yang tidak valid
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  };
+
   const { data, setData, post, processing, errors } = useForm({
     student_id: studentViolation.student_id || '',
     violation_type_id: studentViolation.violation_type_id || '',
     tanggal_pelanggaran: studentViolation.tanggal_pelanggaran || '',
-    jam_pelanggaran: studentViolation.jam_pelanggaran ? studentViolation.jam_pelanggaran.substring(0, 5) : '', // Ambil HH:MM
+    jam_pelanggaran: getInitialTime(studentViolation.jam_pelanggaran),
     keterangan_kejadian: studentViolation.keterangan_kejadian || '',
     bukti_pelanggaran: null, // Untuk file baru
     remove_bukti_pelanggaran: false,
