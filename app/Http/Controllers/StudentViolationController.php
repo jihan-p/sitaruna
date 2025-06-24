@@ -16,11 +16,14 @@ class StudentViolationController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $studentViolations = StudentViolation::with(['student', 'violationType', 'educationStaff']) // DIPERBARUI
-            ->when($search, function ($query, $search) {
-                $query->whereHas('student', fn($q) => $q->where('nama_lengkap', 'like', '%' . $search . '%'))
-                      ->orWhereHas('violationType', fn($q) => $q->where('deskripsi', 'like', '%' . $search . '%')) // DIPERBARUI
+        $studentViolations = StudentViolation::with(['student', 'violationType', 'reporter']) // Gunakan relasi 'reporter'
+            ->when($search, function ($query, $search) { // Grupkan logika pencarian
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('student', fn($sq) => $sq->where('nama_lengkap', 'like', '%' . $search . '%'))
+                      ->orWhereHas('violationType', fn($sq) => $sq->where('deskripsi', 'like', '%' . $search . '%'))
+                      ->orWhereHas('reporter', fn($sq) => $sq->where('name', 'like', '%' . $search . '%')) // Tambahkan pencarian berdasarkan nama pelapor
                       ->orWhere('keterangan_kejadian', 'like', '%' . $search . '%');
+                });
             })
             ->latest()
             ->paginate(10);
@@ -57,33 +60,29 @@ class StudentViolationController extends Controller
         DB::transaction(function () use ($request) {
             $student = Student::findOrFail($request->input('student_id'));
             $totalPointsForSubmission = 0;
-            $educationStaffId = Auth::user()->educationStaff?->id; // Atau Auth::id() jika pelapor adalah user biasa
 
             foreach ($request->input('violations') as $index => $violationData) {
                 $currentViolationType = ViolationType::find($violationData['violation_type_id']);
-                if (!$currentViolationType) {
-                    // Seharusnya tidak terjadi karena validasi 'exists'
-                    // Namun, sebagai fallback, bisa throw exception atau handle error
-                    throw new \Exception("Jenis Pelanggaran dengan ID {$violationData['violation_type_id']} tidak ditemukan.");
-                }
-
-                $newViolationRecordData = [
+                
+                $newViolation = new StudentViolation([
                     'student_id' => $student->id,
                     'violation_type_id' => $currentViolationType->id,
                     'tanggal_pelanggaran' => $request->input('tanggal_pelanggaran'),
                     'jam_pelanggaran' => $request->input('jam_pelanggaran'),
                     'keterangan_kejadian' => $violationData['keterangan_kejadian'] ?? null,
-                    'education_staff_id' => $educationStaffId,
                     'bukti_pelanggaran' => null,
-                ];
+                ]);
 
                 if ($request->hasFile("violations.{$index}.bukti_pelanggaran")) {
                     $file = $request->file("violations.{$index}.bukti_pelanggaran");
                     $path = $file->store('bukti_pelanggaran', 'public');
-                    $newViolationRecordData['bukti_pelanggaran'] = $path;
+                    $newViolation->bukti_pelanggaran = $path;
                 }
 
-                StudentViolation::create($newViolationRecordData);
+                // Kaitkan dengan pelapor (User yang sedang login) menggunakan relasi polimorfik
+                $newViolation->reporter()->associate(Auth::user());
+                $newViolation->save();
+
                 $totalPointsForSubmission += $currentViolationType->poin;
             }
 
@@ -97,28 +96,29 @@ class StudentViolationController extends Controller
 
     public function show(StudentViolation $studentViolation)
     {
-        $studentViolation->load(['student', 'violationType', 'educationStaff']);
+        $studentViolation->load(['student', 'violationType', 'reporter']); // Gunakan relasi 'reporter'
         return Inertia::render('StudentViolations/Show', [
             'studentViolation' => $studentViolation,
         ]);
     }
 
-    public function edit(StudentViolation $studentViolation) // DIPERBARUI
+    public function edit(StudentViolation $studentViolation)
     {
+        // Ambil semua pelanggaran yang merupakan bagian dari insiden yang sama
+        // (taruna, tanggal, dan jam yang sama)
+        $incidentViolations = StudentViolation::where('student_id', $studentViolation->student_id)
+            ->where('tanggal_pelanggaran', $studentViolation->tanggal_pelanggaran->format('Y-m-d'))
+            ->where('jam_pelanggaran', $studentViolation->jam_pelanggaran ? $studentViolation->jam_pelanggaran->format('H:i:s') : null)
+            ->with(['violationType']) // Eager load untuk setiap item
+            ->get();
+
         $students = Student::select('id', 'nama_lengkap', 'nit')->orderBy('nama_lengkap')->get();
-        $violationTypes = ViolationType::where('aktif', true)->select('id', 'deskripsi', 'poin', 'kategori')->orderBy('deskripsi')->get(); // DIPERBARUI
-        $studentViolation->load(['student', 'violationType']);
-
-        // Format jam_pelanggaran for the time input field
-        // The database stores TIME as HH:MM:SS. The 'datetime' cast makes it a Carbon instance.
-        // We need to extract HH:MM for the <input type="time">.
-        $studentViolation->formatted_jam_pelanggaran = $studentViolation->jam_pelanggaran
-            ? \Carbon\Carbon::parse($studentViolation->jam_pelanggaran)->format('H:i')
-            : '';
-
+        $violationTypes = ViolationType::where('aktif', true)->select('id', 'deskripsi', 'poin', 'kategori')->orderBy('deskripsi')->get();
+        $studentViolation->load(['student', 'reporter']); // Muat relasi untuk data utama
 
         return Inertia::render('StudentViolations/Edit', [
-            'studentViolation' => $studentViolation,
+            'studentViolation' => $studentViolation, // Data utama untuk form
+            'incidentViolations' => $incidentViolations, // Daftar lengkap pelanggaran dalam insiden ini
             'students' => $students,
             'violationTypes' => $violationTypes,
         ]);
@@ -126,49 +126,77 @@ class StudentViolationController extends Controller
 
     public function update(Request $request, StudentViolation $studentViolation)
     {
+        // Validasi untuk menangani array pelanggaran
         $request->validate([
             'student_id' => 'required|exists:students,id',
-            'violation_type_id' => 'required|exists:violation_types,id', // DIPERBARUI
             'tanggal_pelanggaran' => 'required|date',
-            'jam_pelanggaran' => 'nullable|date_format:H:i', // Validasi format 24 jam (HH:MM)
-            'keterangan_kejadian' => 'nullable|string|max:255',
-            'bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
-            'remove_bukti_pelanggaran' => 'boolean',
+            'jam_pelanggaran' => 'nullable|date_format:H:i',
+            'violations' => 'required|array|min:1',
+            'violations.*.id' => 'nullable|exists:student_violations,id', // ID untuk item yang sudah ada
+            'violations.*.violation_type_id' => 'required|exists:violation_types,id',
+            'violations.*.keterangan_kejadian' => 'nullable|string|max:1000',
+            'violations.*.bukti_pelanggaran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'violations.*.remove_bukti_pelanggaran' => 'sometimes|boolean',
         ]);
 
         DB::transaction(function () use ($request, $studentViolation) {
-            $oldViolationType = $studentViolation->violationType;
-            $newViolationType = ViolationType::find($request->violation_type_id);
+            // 1. Dapatkan ID pelanggaran asli dari insiden ini
+            $originalViolationIds = StudentViolation::where('student_id', $studentViolation->student_id)
+                ->where('tanggal_pelanggaran', $studentViolation->tanggal_pelanggaran->format('Y-m-d'))
+                ->where('jam_pelanggaran', $studentViolation->jam_pelanggaran ? $studentViolation->jam_pelanggaran->format('H:i:s') : null)
+                ->pluck('id')->toArray();
 
-            if (!$newViolationType) {
-                // This will be caught by the transaction and rolled back.
-                // Consider throwing a more specific exception or handling it before the transaction.
-                return back()->withErrors(['violation_type_id' => 'Jenis Pelanggaran baru tidak ditemukan.'])->withInput(); // Added withInput() for better UX
+            $incomingViolationIds = collect($request->input('violations'))->pluck('id')->filter()->toArray();
+
+            // 2. Hapus pelanggaran yang tidak ada lagi di form
+            $violationsToDeleteIds = array_diff($originalViolationIds, $incomingViolationIds);
+            if (!empty($violationsToDeleteIds)) {
+                $violationsToDelete = StudentViolation::whereIn('id', $violationsToDeleteIds)->get();
+                foreach ($violationsToDelete as $v) {
+                    if ($v->bukti_pelanggaran) {
+                        Storage::disk('public')->delete($v->bukti_pelanggaran);
+                    }
+                    $v->delete();
+                }
             }
 
-            $data = $request->except(['bukti_pelanggaran', 'remove_bukti_pelanggaran']);
+            // 3. Perbarui atau buat entri pelanggaran
+            foreach ($request->input('violations') as $index => $violationData) {
+                $dataToUpsert = [
+                    'student_id' => $request->input('student_id'),
+                    'violation_type_id' => $violationData['violation_type_id'],
+                    'tanggal_pelanggaran' => $request->input('tanggal_pelanggaran'),
+                    'jam_pelanggaran' => $request->input('jam_pelanggaran'),
+                    'keterangan_kejadian' => $violationData['keterangan_kejadian'] ?? null,
+                ];
 
-            if ($request->hasFile('bukti_pelanggaran')) {
-                if ($studentViolation->bukti_pelanggaran) {
-                    Storage::disk('public')->delete($studentViolation->bukti_pelanggaran);
+                $violationRecord = isset($violationData['id']) ? StudentViolation::find($violationData['id']) : new StudentViolation();
+
+                // Penanganan file bukti
+                $buktiPath = $violationRecord->bukti_pelanggaran;
+                if ($request->hasFile("violations.{$index}.bukti_pelanggaran")) {
+                    if ($violationRecord->bukti_pelanggaran) {
+                        Storage::disk('public')->delete($violationRecord->bukti_pelanggaran);
+                    }
+                    $buktiPath = $request->file("violations.{$index}.bukti_pelanggaran")->store('bukti_pelanggaran', 'public');
+                } elseif (isset($violationData['remove_bukti_pelanggaran']) && $violationData['remove_bukti_pelanggaran']) {
+                    if ($violationRecord->bukti_pelanggaran) {
+                        Storage::disk('public')->delete($violationRecord->bukti_pelanggaran);
+                    }
+                    $buktiPath = null;
                 }
-                $path = $request->file('bukti_pelanggaran')->store('bukti_pelanggaran', 'public');
-                $data['bukti_pelanggaran'] = $path;
-            } elseif ($request->boolean('remove_bukti_pelanggaran')) {
-                if ($studentViolation->bukti_pelanggaran) {
-                    Storage::disk('public')->delete($studentViolation->bukti_pelanggaran);
-                }
-                $data['bukti_pelanggaran'] = null;
+                $dataToUpsert['bukti_pelanggaran'] = $buktiPath;
+
+                $violationRecord->fill($dataToUpsert);
+                $violationRecord->reporter()->associate(Auth::user());
+                $violationRecord->save();
             }
-            // No 'else' needed here: if neither of the above, $data won't have 'bukti_pelanggaran',
-            // so the existing value in DB remains untouched by $studentViolation->update($data).
 
-            $studentViolation->update($data);
-
-            $student = Student::find($studentViolation->student_id);
+            // 4. Hitung ulang total poin pelanggaran untuk taruna yang bersangkutan
+            $student = Student::findOrFail($request->input('student_id'));
             if ($student) {
-                $student->total_poin_pelanggaran -= $oldViolationType->poin;
-                $student->total_poin_pelanggaran += $newViolationType->poin;
+                $allViolationsForStudent = StudentViolation::where('student_id', $student->id)->with('violationType')->get();
+                $student->total_poin_pelanggaran = $allViolationsForStudent->sum(fn($v) => $v->violationType->poin ?? 0);
                 $student->save();
             }
         });

@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('student_violations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('violation_type_id')->constrained('violation_types')->onDelete('cascade'); // Mengacu ke tabel violation_types
+            $table->foreignId('violation_type_id')->constrained('violation_types')->onDelete('restrict'); // Ganti ke restrict untuk keamanan data
             $table->date('tanggal_pelanggaran');
             $table->time('jam_pelanggaran')->nullable();
             $table->text('keterangan_kejadian')->nullable(); // Detail insiden pelanggaran
             $table->string('bukti_pelanggaran')->nullable();
 
-            // Kolom untuk mencatat siapa yang menginput
-            $table->foreignId('education_staff_id')->nullable()->constrained('education_staff')->nullOnDelete(); // Link ke tabel education_staff
+            // Relasi Polimorfik untuk Pelapor (bisa User/Admin atau EducationStaff)
+            $table->nullableMorphs('pelapor'); // Membuat kolom pelapor_id dan pelapor_type menjadi nullable
 
             $table->timestamps();
         });

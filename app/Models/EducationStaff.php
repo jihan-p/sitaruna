@@ -46,14 +46,11 @@ class EducationStaff extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    public function studentAchievements()
+    /**
+     * Get all of the violations reported by the education staff.
+     */
+    public function reportedViolations()
     {
-        return $this->hasMany(StudentAchievement::class);
-    }
-
-    public function studentViolations()
-    {
-        return $this->hasMany(StudentViolation::class);
+        return $this->morphMany(\App\Models\StudentViolation::class, 'pelapor');
     }
 }

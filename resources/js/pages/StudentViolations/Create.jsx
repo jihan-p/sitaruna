@@ -25,6 +25,7 @@ export default function CreateStudentViolation({ auth }) {
     student_id: '',
     tanggal_pelanggaran: '',
     jam_pelanggaran: '',
+    education_staff_id: auth.user.id, // Set pelapor ke user yang login
     violations: [{ ...initialViolationEntry, id: Date.now() }], // Inisialisasi dengan satu entri pelanggaran
   });
 
@@ -139,6 +140,18 @@ export default function CreateStudentViolation({ auth }) {
                   className="w-1/2 px-4 py-2 border text-sm rounded-md focus:outline-none focus:ring-0 bg-white text-gray-700 border-gray-300"
                   wrapperClassName="w-full" // Tambahkan ini untuk memastikan wrapper mengambil lebar penuh
                   isClearable
+                />
+              </FormGroup>
+            </div>
+
+            {/* Baris untuk Pelapor */}
+            <div className="grid grid-cols-1 gap-4">
+              <FormGroup label="Pelapor">
+                <input
+                  type="text"
+                  value={auth.user.name}
+                  disabled
+                  className="w-full px-4 py-2 border text-sm rounded-md bg-gray-100 text-gray-500 border-gray-300 cursor-not-allowed"
                 />
               </FormGroup>
             </div>

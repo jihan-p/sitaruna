@@ -158,6 +158,9 @@ class UserController extends Controller implements HasMiddleware
             return back()->with('error', 'Pengguna dengan peran default sistem tidak dapat dihapus.');
         }
 
+        // Orphan related student violations before deleting the user
+        $user->reportedViolations()->update(['pelapor_id' => null, 'pelapor_type' => null]);
+
         // delete user data
         $user->delete();
 

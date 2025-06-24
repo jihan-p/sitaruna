@@ -17,7 +17,6 @@ class StudentViolation extends Model
         'jam_pelanggaran',
         'keterangan_kejadian',
         'bukti_pelanggaran',
-        'education_staff_id',
     ];
 
     protected $casts = [
@@ -30,13 +29,15 @@ class StudentViolation extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function violationType()
+    public function violationType() // Relasi violationType tetap sama
     {
         return $this->belongsTo(ViolationType::class, 'violation_type_id'); // FOREIGN KEY DIPERBARUI
     }
-
-    public function educationStaff()
+    /**
+     * Get the reporter (User or EducationStaff) of the violation.
+     */
+    public function reporter()
     {
-        return $this->belongsTo(EducationStaff::class, 'education_staff_id');
+        return $this->morphTo('pelapor');
     }
 }

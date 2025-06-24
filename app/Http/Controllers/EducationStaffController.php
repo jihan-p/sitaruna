@@ -173,6 +173,9 @@ return redirect()->route('education-staff.index')
             Storage::disk('public')->delete($educationStaff->foto_profil);
         }
 
+        // Orphan related student violations before deleting the staff
+        $educationStaff->reportedViolations()->update(['pelapor_id' => null, 'pelapor_type' => null]);
+
         if ($educationStaff->user) {
             $educationStaff->user->delete();
         }

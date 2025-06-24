@@ -84,7 +84,7 @@ export default function StudentViolationIndex({ auth }) {
                     <Table.Td>{item.violation_type?.poin || 'N/A'}</Table.Td>
                     <Table.Td>{formatDate(item.tanggal_pelanggaran)}</Table.Td>
                     <Table.Td>{formatTime(item.jam_pelanggaran)}</Table.Td>
-                    <Table.Td>{item.education_staff?.name || 'N/A'}</Table.Td>
+                    <Table.Td>{item.reporter?.name || 'N/A'}</Table.Td>
                     {canPerformAnyAction && (
                       <Table.Td>
                         <div className="flex items-center justify-end gap-2">

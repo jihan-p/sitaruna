@@ -50,14 +50,11 @@ class User extends Authenticatable
     {
         return $this->getAllPermissions()->mapWithKeys(fn($permission) => [$permission['name'] => true]);
     }
-
-    public function educationStaff()
+    /**
+     * Get all of the violations reported by the user.
+     */
+    public function reportedViolations()
     {
-        return $this->hasOne(EducationStaff::class);
-    }
-
-    public function student()
-    {
-        return $this->hasOne(Student::class);
+        return $this->morphMany(\App\Models\StudentViolation::class, 'pelapor');
     }
 }
