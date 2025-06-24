@@ -25,7 +25,6 @@ export default function CreateStudentViolation({ auth }) {
     student_id: '',
     tanggal_pelanggaran: '',
     jam_pelanggaran: '',
-    education_staff_id: auth.user.id, // Set pelapor ke user yang login
     violations: [{ ...initialViolationEntry, id: Date.now() }], // Inisialisasi dengan satu entri pelanggaran
   });
 

@@ -36,8 +36,8 @@ class StudentViolation extends Model
     /**
      * Get the reporter (User or EducationStaff) of the violation.
      */
-    public function reporter()
+    public function reporter() // Nama fungsi tetap 'reporter' untuk konsistensi
     {
-        return $this->morphTo('pelapor');
+        return $this->morphTo('pelapor'); // Beritahu Eloquent untuk mencari kolom 'pelapor_id' dan 'pelapor_type'
     }
 }
