@@ -75,8 +75,18 @@ class StudentViolationController extends Controller
 
                 if ($request->hasFile("violations.{$index}.bukti_pelanggaran")) {
                     $file = $request->file("violations.{$index}.bukti_pelanggaran");
-                    $path = $file->store('bukti_pelanggaran', 'public');
-                    $newViolation->bukti_pelanggaran = $path;
+
+                    // Buat nama file kustom: Ymd-His-identifier-index.ext
+                    $studentIdentifier = $student->nit ?? $student->nisn ?? $student->id;
+                    $datePart = (new \DateTime($request->input('tanggal_pelanggaran')))->format('Ymd');
+                    $timeInput = $request->input('jam_pelanggaran');
+                    $timePart = $timeInput ? (new \DateTime($timeInput))->format('His') : '000000';
+                    $extension = $file->getClientOriginalExtension();
+                    // Tambahkan index untuk keunikan jika ada beberapa file dalam satu insiden
+                    $filename = "{$datePart}-{$timePart}-{$studentIdentifier}-{$index}.{$extension}";
+
+                    $buktiPath = $file->storeAs('bukti_pelanggaran', $filename, 'public');
+                    $newViolation->bukti_pelanggaran = $buktiPath;
                 }
 
                 // Kaitkan dengan pelapor (User yang sedang login) menggunakan relasi polimorfik
@@ -140,6 +150,9 @@ class StudentViolationController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $studentViolation) {
+            // Pindahkan query student ke atas agar bisa digunakan untuk nama file
+            $student = Student::findOrFail($request->input('student_id'));
+
             // 1. Dapatkan ID pelanggaran asli dari insiden ini
             $originalViolationIds = StudentViolation::where('student_id', $studentViolation->student_id)
                 ->where('tanggal_pelanggaran', $studentViolation->tanggal_pelanggaran->format('Y-m-d'))
@@ -178,7 +191,19 @@ class StudentViolationController extends Controller
                     if ($violationRecord->bukti_pelanggaran) {
                         Storage::disk('public')->delete($violationRecord->bukti_pelanggaran);
                     }
-                    $buktiPath = $request->file("violations.{$index}.bukti_pelanggaran")->store('bukti_pelanggaran', 'public');
+                    $file = $request->file("violations.{$index}.bukti_pelanggaran");
+
+                    // Buat nama file kustom: Ymd-His-identifier-id.ext
+                    $studentIdentifier = $student->nit ?? $student->nisn ?? $student->id;
+                    $datePart = (new \DateTime($request->input('tanggal_pelanggaran')))->format('Ymd');
+                    $timeInput = $request->input('jam_pelanggaran');
+                    $timePart = $timeInput ? (new \DateTime($timeInput))->format('His') : '000000';
+                    $extension = $file->getClientOriginalExtension();
+                    // Gunakan ID pelanggaran (atau index untuk item baru) untuk keunikan
+                    $uniquePart = $violationRecord->id ?? "new-{$index}";
+                    $filename = "{$datePart}-{$timePart}-{$studentIdentifier}-{$uniquePart}.{$extension}";
+
+                    $buktiPath = $file->storeAs('bukti_pelanggaran', $filename, 'public');
                 } elseif (isset($violationData['remove_bukti_pelanggaran']) && $violationData['remove_bukti_pelanggaran']) {
                     if ($violationRecord->bukti_pelanggaran) {
                         Storage::disk('public')->delete($violationRecord->bukti_pelanggaran);
@@ -193,8 +218,7 @@ class StudentViolationController extends Controller
             }
 
             // 4. Hitung ulang total poin pelanggaran untuk taruna yang bersangkutan
-            $student = Student::findOrFail($request->input('student_id'));
-            if ($student) {
+            if ($student) { // student sudah di-query di atas
                 $allViolationsForStudent = StudentViolation::where('student_id', $student->id)->with('violationType')->get();
                 $student->total_poin_pelanggaran = $allViolationsForStudent->sum(fn($v) => $v->violationType->poin ?? 0);
                 $student->save();

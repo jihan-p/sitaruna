@@ -26,6 +26,12 @@ export default function ShowStudentViolation({ auth }) {
     });
   };
 
+  const isImage = (filename) => {
+    if (!filename) return false;
+    const extension = filename.split('.').pop().toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(extension);
+  };
+
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -75,14 +81,29 @@ export default function ShowStudentViolation({ auth }) {
             {studentViolation.bukti_pelanggaran && (
               <div className="md:col-span-2">
                 <p className="text-sm text-gray-600">Bukti Pelanggaran:</p>
-                <a
-                  href={`/storage/${studentViolation.bukti_pelanggaran}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  Lihat Bukti
-                </a>
+                {isImage(studentViolation.bukti_pelanggaran) ? (
+                  <div className="mt-2">
+                    <a href={`/storage/${studentViolation.bukti_pelanggaran}`} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={`/storage/${studentViolation.bukti_pelanggaran}`}
+                        alt="Bukti Pelanggaran"
+                        className="max-h-64 w-auto cursor-pointer rounded-md border border-gray-300 object-contain transition-transform duration-300 hover:scale-105"
+                      />
+                    </a>
+                    <a
+                      href={`/storage/${studentViolation.bukti_pelanggaran}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-block text-sm text-blue-600 hover:underline"
+                    >
+                      Lihat atau Unduh Gambar
+                    </a>
+                  </div>
+                ) : (
+                  <a href={`/storage/${studentViolation.bukti_pelanggaran}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-blue-600 hover:underline">
+                    Lihat atau Unduh File Bukti
+                  </a>
+                )}
               </div>
             )}
           </div>
