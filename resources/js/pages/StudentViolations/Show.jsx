@@ -66,7 +66,7 @@ export default function ShowStudentViolation({ auth }) {
             </div>
             <div>
               <p className="text-sm text-gray-600">Dilaporkan Oleh:</p>
-              <p className="text-lg font-semibold text-gray-900">{studentViolation.education_staff?.name || 'Sistem'}</p>
+              <p className="text-lg font-semibold text-gray-900">{studentViolation.reporter?.name || 'Data Pelapor Tidak Ditemukan'}</p>
             </div>
             <div className="md:col-span-2">
               <p className="text-sm text-gray-600">Keterangan Kejadian:</p>

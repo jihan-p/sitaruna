@@ -38,6 +38,6 @@ class StudentViolation extends Model
      */
     public function reporter() // Nama fungsi tetap 'reporter' untuk konsistensi
     {
-        return $this->morphTo('pelapor'); // Beritahu Eloquent untuk mencari kolom 'pelapor_id' dan 'pelapor_type'
+        return $this->morphTo(null, 'pelapor_type', 'pelapor_id');
     }
 }
